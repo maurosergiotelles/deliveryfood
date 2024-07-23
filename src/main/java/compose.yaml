@@ -1,0 +1,12 @@
+services:
+  mysql:
+    container_name: jpaexp
+    image: mysql:8.0.35-oracle
+    environment:
+      MYSQL_ROOT_PASSWORD: 123
+      MYSQL_DATABASE: jpa-exp
+    ports:
+      - 33060:3306
+    #volumes:
+      #bind mount
+      #- db_vol:/var/lib/postgresql/data
