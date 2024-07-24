@@ -1,12 +1,12 @@
 services:
   mysql:
-    container_name: jpaexp
+    container_name: deliveryfood
     image: mysql:8.0.35-oracle
     environment:
-      MYSQL_ROOT_PASSWORD: 123
-      MYSQL_DATABASE: jpa-exp
+      MYSQL_ROOT_PASSWORD: 1234
+      MYSQL_DATABASE: deliveryfood
     ports:
-      - 33060:3306
+      - 33061:3306
     #volumes:
       #bind mount
       #- db_vol:/var/lib/postgresql/data
