@@ -10,10 +10,10 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 @Data
-@Table(name = "cozinha", schema = "deliveryfood")
-@Entity
+@Table(name = "permissao", schema = "deliveryfood")
 @EqualsAndHashCode(of = { "id" })
-public class Cozinha {
+@Entity
+public class Permissao {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -22,4 +22,6 @@ public class Cozinha {
 	@Column(nullable = false)
 	private String nome;
 
+	@Column(nullable = false)
+	private String descricao;
 }

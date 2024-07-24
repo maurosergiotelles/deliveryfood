@@ -1,8 +1,8 @@
-package com.deliveryfood.test;
+package com.deliveryfood.apart;
 
 import org.springframework.context.annotation.Profile;
 
-@Profile("test")
+@Profile("apart")
 public class EmailClienteEnviarEvent {
 
 	public EmailClienteEnviarEvent(String mensagem) {

@@ -1,4 +1,4 @@
-package com.deliveryfood.test;
+package com.deliveryfood.apart;
 
 import java.util.Properties;
 
@@ -6,7 +6,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 
-@Profile("test")
+@Profile("apart")
 @Configuration
 public class ConfigurationTeste {
 

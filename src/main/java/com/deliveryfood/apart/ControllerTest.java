@@ -1,4 +1,4 @@
-package com.deliveryfood.test;
+package com.deliveryfood.apart;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
-@Profile("test")
+@Profile("apart")
 @RestController
 @RequestMapping("/base2")
 public class ControllerTest {
