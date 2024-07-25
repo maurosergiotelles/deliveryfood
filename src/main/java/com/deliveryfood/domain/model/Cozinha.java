@@ -17,8 +17,10 @@ public class Cozinha {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
+//	@JsonIgnore
 	private Long id;
 
+//	@JsonProperty("titulo")
 	@Column(nullable = false)
 	private String nome;
 
