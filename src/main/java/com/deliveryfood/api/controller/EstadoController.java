@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.deliveryfood.domain.model.Estado;
-import com.deliveryfood.infrastructure.repository.EstadoRepository;
+import com.deliveryfood.domain.repository.EstadoRepository;
 
 @RestController
 @RequestMapping(value = "/estados", produces = { MediaType.APPLICATION_JSON_VALUE })
