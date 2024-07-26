@@ -68,7 +68,6 @@ public class CadastroRestauranteService {
 		}
 		throw new EntidadeNaoEncontradaException(
 				String.format("Restaurante com o código %d não encontrado", restauranteId));
-
 	}
 
 }
