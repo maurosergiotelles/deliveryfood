@@ -88,4 +88,10 @@ public class RestauranteController {
 		return ResponseEntity.ok(cadastroRestaurante.porNomeETaxaFrete(nome, taxaFreteInicial, taxaFreteFinal));
 
 	}
+
+	@GetMapping("/com-frete-gratis")
+	public List<Restaurante> comFreteGratis(String nome) {
+		return cadastroRestaurante.findComFreteGratis(nome);
+	}
+
 }

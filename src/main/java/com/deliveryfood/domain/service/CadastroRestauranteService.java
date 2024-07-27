@@ -75,4 +75,8 @@ public class CadastroRestauranteService {
 		return restauranteRepository.find(nome, taxaFreteInicial, taxaFreteFinal);
 	}
 
+	public List<Restaurante> findComFreteGratis(String nome) {
+		return restauranteRepository.findComFreteGratis(nome);
+	}
+
 }
