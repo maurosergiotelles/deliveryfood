@@ -24,9 +24,6 @@ import com.deliveryfood.domain.service.CadastroCozinhaService;
 /* @ResponseStatus(code = HttpStatus.CREATED) */
 public class CozinhaController {
 
-//	@Autowired
-//	private CozinhaRepository cozinhaRepository;
-
 	@Autowired
 	private CadastroCozinhaService cadastroCozinha;
 
@@ -67,13 +64,13 @@ public class CozinhaController {
 	}
 
 	@PutMapping("/{id}")
-	public ResponseEntity<Cozinha> alterar(@PathVariable Long id, @RequestBody Cozinha cozinha) {
+	public ResponseEntity<?> alterar(@PathVariable Long id, @RequestBody Cozinha cozinha) {
 		try {
 			Cozinha cozinhaAlterada = cadastroCozinha.alterar(id, cozinha);
 
 			return ResponseEntity.ok(cozinhaAlterada);
 		} catch (EntidadeNaoEncontradaException e) {
-			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(cozinha);
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
 		}
 
 	}
@@ -91,6 +88,13 @@ public class CozinhaController {
 			return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
 
 		}
+
+	}
+
+	@GetMapping("/por-nome")
+	public ResponseEntity<List<Cozinha>> buscaPorNome(String nome) {
+
+		return ResponseEntity.ok(cadastroCozinha.findByNomeContaining(nome));
 
 	}
 }

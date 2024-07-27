@@ -1,5 +1,6 @@
 package com.deliveryfood.domain.service;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
@@ -28,46 +29,50 @@ public class CadastroRestauranteService {
 	}
 
 	public Restaurante findById(Long id) {
-		Optional<Restaurante> optional = restauranteRepository.findById(id);
-		if (optional.isPresent()) {
-			Restaurante restaurante = optional.get();
-			return restaurante;
-		}
+		Optional<Restaurante> optionalRestaurante = restauranteRepository.findById(id);
 
-		throw new EntidadeNaoEncontradaException(String.format("Restaurante com o código %d não encontrado", id));
-
+		return optionalRestaurante.orElseThrow(() -> new EntidadeNaoEncontradaException(
+				String.format("Restaurante com o código %d não encontrado", id)));
 	}
 
 	public Restaurante incluir(Restaurante restaurante) {
 		Long cozinhaId = restaurante.getCozinha().getId();
-		Optional<Cozinha> cozinhaOptional = cozinhaRepository.findById(cozinhaId);
-		if (cozinhaOptional.isPresent()) {
-			Restaurante restauranteSalvo = restauranteRepository.save(restaurante);
+		Optional<Cozinha> optionalCozinha = cozinhaRepository.findById(cozinhaId);
 
-			return restauranteSalvo;
-		}
+		optionalCozinha.orElseThrow(() -> new EntidadeNaoEncontradaException(
+				String.format("Cozinha com código %d não foi encontrado", cozinhaId)));
 
-		throw new EntidadeNaoEncontradaException(String.format("Cozinha com código %d não foi encontrado", cozinhaId));
+		return restauranteRepository.save(restaurante);
+
 	}
 
 	public Restaurante alterar(Long restauranteId, Restaurante restaurante) {
 		Long cozinhaId = restaurante.getCozinha().getId();
 
-		Optional<Cozinha> cozinhaOptional = cozinhaRepository.findById(cozinhaId);
-		if (!cozinhaOptional.isPresent()) {
-			throw new EntidadeChaveEstrangeiraNaoEncontradaException(
-					String.format("Cozinha com o código %d não encontrada", cozinhaId));
-		}
+		Optional<Cozinha> optionalCozinha = cozinhaRepository.findById(cozinhaId);
 
-		Optional<Restaurante> restauranteOptional = restauranteRepository.findById(restauranteId);
-		if (restauranteOptional.isPresent()) {
-			Restaurante restauranteEncontrado = restauranteOptional.get();
-			BeanUtils.copyProperties(restaurante, restauranteEncontrado, "id");
-			Restaurante restauranteSalvo = restauranteRepository.save(restauranteEncontrado);
-			return restauranteSalvo;
-		}
-		throw new EntidadeNaoEncontradaException(
-				String.format("Restaurante com o código %d não encontrado", restauranteId));
+		optionalCozinha.orElseThrow(() -> new EntidadeChaveEstrangeiraNaoEncontradaException(
+				String.format("Cozinha com o código %d não encontrada", cozinhaId)));
+
+		Optional<Restaurante> optionalRestaurante = restauranteRepository.findById(restauranteId);
+
+		Restaurante restauranteEncontrado = optionalRestaurante.orElseThrow(() -> new EntidadeNaoEncontradaException(
+				String.format("Restaurante com o código %d não encontrado", restauranteId)));
+
+		BeanUtils.copyProperties(restaurante, restauranteEncontrado, "id");
+		return restauranteRepository.save(restauranteEncontrado);
+	}
+
+	public List<Restaurante> findByBetweenTaxaInicialETaxaFinal(BigDecimal taxaInicial, BigDecimal taxaFinal) {
+		return restauranteRepository.findByTaxaFreteBetween(taxaInicial, taxaFinal);
+	}
+
+	public List<Restaurante> buscaPorNomeECozinhaId(String nome, Long cozinhaId) {
+		return restauranteRepository.buscaPorNomeECozinhaId(nome, cozinhaId);
+	}
+
+	public List<Restaurante> porNomeETaxaFrete(String nome, BigDecimal taxaFreteInicial, BigDecimal taxaFreteFinal) {
+		return restauranteRepository.find(nome, taxaFreteInicial, taxaFreteFinal);
 	}
 
 }

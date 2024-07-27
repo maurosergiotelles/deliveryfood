@@ -25,19 +25,15 @@ public class CadastroCozinhaService {
 	}
 
 	public Cozinha alterar(Long id, Cozinha cozinha) {
-		Optional<Cozinha> optional = cozinhaRepository.findById(id);
+		Optional<Cozinha> optionalCozinha = cozinhaRepository.findById(id);
 
-		if (optional.isPresent()) {
-			Cozinha cozinhaAtual = optional.get();
+		Cozinha cozinhaAtual = optionalCozinha.orElseThrow(
+				() -> new EntidadeNaoEncontradaException(String.format("Cozinha com o código %d não encontrada", id)));
 
-			BeanUtils.copyProperties(cozinha, cozinhaAtual, "id");
+		BeanUtils.copyProperties(cozinha, cozinhaAtual, "id");
 
-			Cozinha cozinhaAlterada = cozinhaRepository.save(cozinhaAtual);
+		return cozinhaRepository.save(cozinhaAtual);
 
-			return cozinhaAlterada;
-		}
-
-		throw new EntidadeNaoEncontradaException(String.format("Cozinha com o código %d não encontrada", id));
 	}
 
 	public void excluir(Long id) {
@@ -55,12 +51,14 @@ public class CadastroCozinhaService {
 	}
 
 	public Cozinha findById(Long id) {
-		Optional<Cozinha> optional = cozinhaRepository.findById(id);
-		if (optional.isPresent()) {
-			Cozinha cozinha = optional.get();
-			return cozinha;
-		}
-		throw new EntidadeNaoEncontradaException(String.format("Cozinha com o código %d não encontrada", id));
+		Optional<Cozinha> optionalCozinha = cozinhaRepository.findById(id);
+		return optionalCozinha.orElseThrow(
+				() -> new EntidadeNaoEncontradaException(String.format("Cozinha com o código %d não encontrada", id)));
 
+	}
+
+	public List<Cozinha> findByNomeContaining(String nome) {
+
+		return cozinhaRepository.findByNomeContaining(nome);
 	}
 }

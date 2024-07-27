@@ -25,16 +25,8 @@ public class CadastroEstadoService {
 
 	public Estado findById(Long id) {
 		Optional<Estado> optionalEstado = estadoRepository.findById(id);
-
-		if (optionalEstado.isPresent()) {
-			Estado estado = optionalEstado.get();
-
-			return estado;
-
-		}
-
-		throw new EntidadeNaoEncontradaException(String.format("Estado com o código %d não encontrado", id));
-
+		return optionalEstado.orElseThrow(
+				() -> new EntidadeNaoEncontradaException(String.format("Estado com o código %d não encontrado", id)));
 	}
 
 	public Estado incluir(Estado estado) {
@@ -43,16 +35,12 @@ public class CadastroEstadoService {
 
 	public Estado alterar(Long id, Estado estado) {
 		Optional<Estado> optionalEstado = estadoRepository.findById(id);
-		if (optionalEstado.isPresent()) {
-			Estado estadoLocalizado = optionalEstado.get();
-			BeanUtils.copyProperties(estado, estadoLocalizado, "id");
+		Estado estadoLocalizado = optionalEstado.orElseThrow(() -> new EntidadeNaoEncontradaException(
+				String.format("Estado com o código %d não foi encontrado", id)));
 
-			Estado estadoSalvo = estadoRepository.save(estadoLocalizado);
+		BeanUtils.copyProperties(estado, estadoLocalizado, "id");
 
-			return estadoSalvo;
-		}
-
-		throw new EntidadeNaoEncontradaException(String.format("Estado com o código %d não foi encontrado", id));
+		return estadoRepository.save(estadoLocalizado);
 
 	}
 

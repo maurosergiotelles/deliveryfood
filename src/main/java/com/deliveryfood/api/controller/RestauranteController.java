@@ -1,5 +1,6 @@
 package com.deliveryfood.api.controller;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,13 +34,13 @@ public class RestauranteController {
 	}
 
 	@GetMapping("/{id}")
-	public ResponseEntity<Restaurante> getPorId(@PathVariable Long id) {
+	public ResponseEntity<?> getPorId(@PathVariable Long id) {
 		try {
 			Restaurante restaurante = cadastroRestaurante.findById(id);
 
 			return ResponseEntity.ok(restaurante);
 		} catch (EntidadeNaoEncontradaException e) {
-			return ResponseEntity.notFound().build();
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
 		}
 	}
 
@@ -69,4 +70,22 @@ public class RestauranteController {
 
 	}
 
+	@GetMapping("/por-taxa-frete")
+	public ResponseEntity<List<Restaurante>> porTaxaFrete(BigDecimal taxaInicial, BigDecimal taxaFinal) {
+		return ResponseEntity.ok(cadastroRestaurante.findByBetweenTaxaInicialETaxaFinal(taxaInicial, taxaFinal));
+
+	}
+
+	@GetMapping("/por-nome-cozinhaId")
+	public ResponseEntity<List<Restaurante>> porNomeECozinhaId(String nome, Long cozinhaId) {
+		return ResponseEntity.ok(cadastroRestaurante.buscaPorNomeECozinhaId(nome, cozinhaId));
+
+	}
+
+	@GetMapping("/por-nome-taxaFrete")
+	public ResponseEntity<List<Restaurante>> porNomeETaxaFrete(String nome, BigDecimal taxaFreteInicial,
+			BigDecimal taxaFreteFinal) {
+		return ResponseEntity.ok(cadastroRestaurante.porNomeETaxaFrete(nome, taxaFreteInicial, taxaFreteFinal));
+
+	}
 }

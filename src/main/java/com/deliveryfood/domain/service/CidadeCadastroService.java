@@ -31,57 +31,41 @@ public class CidadeCadastroService {
 	public Cidade findById(Long id) {
 		Optional<Cidade> optionalCidade = cidadeRepository.findById(id);
 
-		if (optionalCidade.isPresent()) {
+		return optionalCidade.orElseThrow(
+				() -> new EntidadeNaoEncontradaException(String.format("Cidade não encontrada com o código %d", id)));
 
-			Cidade cidadeEncontrada = optionalCidade.get();
-			return cidadeEncontrada;
-
-		}
-		throw new EntidadeNaoEncontradaException(String.format("Cidade não encontrada com o código %d", id));
 	}
 
 	public Cidade incluir(Cidade cidade) {
 		Long estadoId = cidade.getEstado().getId();
 
-		Optional<Estado> estadoOptional = estadoRepository.findById(estadoId);
+		Optional<Estado> optionalEstado = estadoRepository.findById(estadoId);
 
-		if (estadoOptional.isPresent()) {
+		optionalEstado.orElseThrow(() -> new EntidadeNaoEncontradaException(
+				String.format("Estado com o código %d não encontrado", estadoId)));
 
-			Cidade cidadeSalva = cidadeRepository.save(cidade);
-
-			return cidadeSalva;
-		}
-
-		throw new EntidadeNaoEncontradaException(String.format("Estado com o código %d não encontrado", estadoId));
-
+		return cidadeRepository.save(cidade);
 	}
 
 	public Cidade alterar(Long id, Cidade cidade) {
 		Long estadoId = cidade.getEstado().getId();
 
-		Optional<Estado> estadoOptional = estadoRepository.findById(estadoId);
+		Optional<Estado> optionalEstado = estadoRepository.findById(estadoId);
 
-		if (!estadoOptional.isPresent()) {
-			throw new EntidadeChaveEstrangeiraNaoEncontradaException(
-					String.format("Estado com código %d não existe", estadoId));
-		}
+		optionalEstado.orElseThrow(() -> new EntidadeChaveEstrangeiraNaoEncontradaException(
+				String.format("Estado com código %d não existe", estadoId)));
 
-		Optional<Cidade> cidadeOptional = cidadeRepository.findById(id);
-		if (cidadeOptional.isPresent()) {
-			Cidade cidadeEncontrada = cidadeOptional.get();
+		Optional<Cidade> optionalCidade = cidadeRepository.findById(id);
 
-			BeanUtils.copyProperties(cidade, cidadeEncontrada, "id");
+		Cidade cidadeEncontrada = optionalCidade.orElseThrow(
+				() -> new EntidadeNaoEncontradaException(String.format("Cidade com o código %d não encontrada", id)));
 
-			Cidade cidadeSalva = cidadeRepository.save(cidadeEncontrada);
-			return cidadeSalva;
-		}
+		BeanUtils.copyProperties(cidade, cidadeEncontrada, "id");
 
-		throw new EntidadeNaoEncontradaException(String.format("Cidade com o código %d não encontrada", id));
+		return cidadeRepository.save(cidadeEncontrada);
 	}
 
 	public void deletar(Long id) {
 		cidadeRepository.deleteById(id);
-
 	}
-
 }
