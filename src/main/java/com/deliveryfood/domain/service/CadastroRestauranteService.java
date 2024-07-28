@@ -24,8 +24,9 @@ public class CadastroRestauranteService {
 	@Autowired
 	private CozinhaRepository cozinhaRepository;
 
-	public List<Restaurante> getAll() {
-		return restauranteRepository.findAll();
+	public List<Restaurante> findAllC() {
+		System.out.println("findAllC");
+		return restauranteRepository.findAllC();
 	}
 
 	public Restaurante findById(Long id) {
@@ -59,7 +60,8 @@ public class CadastroRestauranteService {
 		Restaurante restauranteEncontrado = optionalRestaurante.orElseThrow(() -> new EntidadeNaoEncontradaException(
 				String.format("Restaurante com o código %d não encontrado", restauranteId)));
 
-		BeanUtils.copyProperties(restaurante, restauranteEncontrado, "id");
+		BeanUtils.copyProperties(restaurante, restauranteEncontrado, "id", "formasPagamento", "endereco",
+				"dataCadastro", "produto");
 		return restauranteRepository.save(restauranteEncontrado);
 	}
 

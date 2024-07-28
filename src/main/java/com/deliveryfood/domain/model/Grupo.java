@@ -10,27 +10,28 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.Table;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 @Data
-@Table(name = "cozinha", schema = "deliveryfood")
 @Entity
 @EqualsAndHashCode(of = { "id" })
-public class Cozinha {
+@Table(name = "grupo", schema = "deliveryfood")
+public class Grupo {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-//	@JsonIgnore
+	@JsonIgnore
 	private Long id;
-
-//	@JsonProperty("titulo")
 	@Column(nullable = false)
 	private String nome;
 
-	@OneToMany(mappedBy = "cozinha")
-	@JsonIgnore
-	private List<Restaurante> restaurantes = new ArrayList<>();
+	@ManyToMany
+	@JoinTable(name = "grupo_permissao", schema = "deliveryfood", joinColumns = @JoinColumn(name = "grupo_id"), inverseJoinColumns = @JoinColumn(name = "permissao_id"))
+	private List<Permissao> permissoes = new ArrayList<>();
+
 }

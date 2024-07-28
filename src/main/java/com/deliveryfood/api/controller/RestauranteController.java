@@ -28,7 +28,7 @@ public class RestauranteController {
 
 	@GetMapping
 	public ResponseEntity<List<Restaurante>> getAll() {
-		List<Restaurante> restaurantes = cadastroRestaurante.getAll();
+		List<Restaurante> restaurantes = cadastroRestaurante.findAllC();
 
 		return ResponseEntity.ok(restaurantes);
 	}
