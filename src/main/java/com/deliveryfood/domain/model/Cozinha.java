@@ -16,7 +16,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 @Data
-@Table(name = "cozinha", schema = "deliveryfood")
+@Table(name = "cozinha")
 @Entity
 @EqualsAndHashCode(of = { "id" })
 public class Cozinha {

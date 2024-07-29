@@ -12,7 +12,7 @@ import lombok.EqualsAndHashCode;
 @Data
 @Entity
 @EqualsAndHashCode(of = { "id" })
-@Table(name = "forma_pagamento", schema = "deliveryfood")
+@Table(name = "forma_pagamento")
 public class FormaPagamento {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)

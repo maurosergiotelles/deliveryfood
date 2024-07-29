@@ -20,7 +20,7 @@ import lombok.EqualsAndHashCode;
 
 @Data
 @Entity
-@Table(name = "usuario", schema = "deliveryfood")
+@Table(name = "usuario")
 @EqualsAndHashCode(of = { "id" })
 public class Usuario {
 
@@ -42,6 +42,6 @@ public class Usuario {
 	private LocalDateTime dataCadastro;
 
 	@ManyToMany
-	@JoinTable(name = "usuario_grupo", schema = "deliveryfood", joinColumns = @JoinColumn(name = "usuario_id"), inverseJoinColumns = @JoinColumn(name = "grupo_id"))
+	@JoinTable(name = "usuario_grupo", joinColumns = @JoinColumn(name = "usuario_id"), inverseJoinColumns = @JoinColumn(name = "grupo_id"))
 	private List<Grupo> grupos = new ArrayList<>();
 }

@@ -10,7 +10,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 @Data
-@Table(name = "permissao", schema = "deliveryfood")
+@Table(name = "permissao")
 @EqualsAndHashCode(of = { "id" })
 @Entity
 public class Permissao {

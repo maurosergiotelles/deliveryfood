@@ -29,7 +29,7 @@ import lombok.EqualsAndHashCode;
 @Data
 @EqualsAndHashCode(of = { "id" })
 @Entity
-@Table(name = "restaurante", schema = "deliveryfood")
+@Table(name = "restaurante")
 public class Restaurante {
 
 	@Id
@@ -64,7 +64,7 @@ public class Restaurante {
 	private Cozinha cozinha;
 
 	@ManyToMany
-	@JoinTable(name = "restaurante_forma_pagamento", schema = "deliveryfood", joinColumns = @JoinColumn(name = "restaurante_id"), inverseJoinColumns = @JoinColumn(name = "forma_pagamento_id"))
+	@JoinTable(name = "restaurante_forma_pagamento", joinColumns = @JoinColumn(name = "restaurante_id"), inverseJoinColumns = @JoinColumn(name = "forma_pagamento_id"))
 	@JsonIgnore
 	private List<FormaPagamento> formasPagamento = new ArrayList<>();
 
