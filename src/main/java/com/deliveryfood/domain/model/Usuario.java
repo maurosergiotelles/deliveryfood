@@ -8,6 +8,7 @@ import org.hibernate.annotations.CreationTimestamp;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.ForeignKey;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -28,13 +29,13 @@ public class Usuario {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
-	@Column(nullable = false)
+	@Column(nullable = false, length = 60)
 	private String nome;
 
-	@Column(nullable = false)
+	@Column(nullable = false, length = 60)
 	private String email;
 
-	@Column(nullable = false)
+	@Column(nullable = false, length = 60)
 	private String senha;
 
 	@CreationTimestamp
@@ -42,6 +43,6 @@ public class Usuario {
 	private LocalDateTime dataCadastro;
 
 	@ManyToMany
-	@JoinTable(name = "usuario_grupo", joinColumns = @JoinColumn(name = "usuario_id"), inverseJoinColumns = @JoinColumn(name = "grupo_id"))
+	@JoinTable(name = "usuario_grupo", joinColumns = @JoinColumn(name = "usuario_id", foreignKey = @ForeignKey(name = "usuario_usuario_grupo_fk")), inverseJoinColumns = @JoinColumn(name = "grupo_id", foreignKey = @ForeignKey(name = "usuario_grupo_fk")))
 	private List<Grupo> grupos = new ArrayList<>();
 }

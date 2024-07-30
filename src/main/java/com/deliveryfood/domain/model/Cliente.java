@@ -10,15 +10,16 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 @Data
-@Entity
 @EqualsAndHashCode(of = { "id" })
-@Table(name = "forma_pagamento")
-public class FormaPagamento {
+@Entity
+@Table(name = "cliente")
+public class Cliente {
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
-	@Column(nullable = false, length = 60)
-	private String descricao;
+	@Column(nullable = false)
+	private String nome;
 
 }

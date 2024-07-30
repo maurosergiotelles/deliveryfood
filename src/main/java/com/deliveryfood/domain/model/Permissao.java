@@ -19,10 +19,10 @@ public class Permissao {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
-	@Column(nullable = false)
+	@Column(nullable = false, length = 60)
 	private String nome;
 
-	@Column(nullable = false)
+	@Column(nullable = false, length = 60)
 	private String descricao;
 
 }

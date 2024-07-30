@@ -2,6 +2,8 @@ package com.deliveryfood.domain.model;
 
 import java.math.BigDecimal;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.ForeignKey;
@@ -16,25 +18,30 @@ import lombok.EqualsAndHashCode;
 
 @Data
 @EqualsAndHashCode(of = { "id" })
-@Table(name = "produto")
 @Entity
-public class Produto {
+@Table(name = "item_pedido")
+public class ItemPedido {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
-	@Column(length = 60)
-	private String nome;
+	@Column(nullable = false)
+	private Long quantidade;
 
-	@Column(length = 60)
-	private String descricao;
+	@Column(name = "preco_unitario", nullable = false)
+	private BigDecimal precoUnitario;
 
-	private BigDecimal preco;
+	@Column(length = 255)
+	private String observacao;
 
-	private Boolean ativo;
-
+	@JsonIgnore
 	@ManyToOne
-	@JoinColumn(name = "restaurante_id", nullable = false, foreignKey = @ForeignKey(name = "produto_restaurante_fk"))
-	private Restaurante restaurante;
+	@JoinColumn(name = "pedido_id", foreignKey = @ForeignKey(name = "pedido_item_fk"), nullable = false)
+	private Pedido pedido;
+
+	@JsonIgnore
+	@ManyToOne
+	@JoinColumn(name = "produto_id", foreignKey = @ForeignKey(name = "item_pedido_produto_fk"), nullable = false)
+	private Produto produto;
 }

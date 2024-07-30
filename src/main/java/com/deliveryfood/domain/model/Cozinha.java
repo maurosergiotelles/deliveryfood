@@ -27,7 +27,7 @@ public class Cozinha {
 	private Long id;
 
 //	@JsonProperty("titulo")
-	@Column(nullable = false)
+	@Column(nullable = false, length = 60)
 	private String nome;
 
 	@OneToMany(mappedBy = "cozinha")

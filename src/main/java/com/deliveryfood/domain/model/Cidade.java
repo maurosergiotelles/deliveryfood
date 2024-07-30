@@ -2,6 +2,7 @@ package com.deliveryfood.domain.model;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.ForeignKey;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -21,10 +22,10 @@ public class Cidade {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
-	@Column(nullable = false)
+	@Column(nullable = false, length = 60)
 	private String nome;
 
 	@ManyToOne
-	@JoinColumn(name = "estado_id")
+	@JoinColumn(name = "estado_id", foreignKey = @ForeignKey(name = "cidade_estado_fk"))
 	private Estado estado;
 }

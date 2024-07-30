@@ -14,6 +14,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
+import jakarta.persistence.ForeignKey;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -36,7 +37,7 @@ public class Restaurante {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
-	@Column(nullable = false)
+	@Column(nullable = false, length = 60)
 	private String nome;
 
 	@JsonIgnore
@@ -50,7 +51,6 @@ public class Restaurante {
 	private LocalDateTime dataAtualizacao;
 
 	@Column(name = "taxa_frete", nullable = false)
-
 	private BigDecimal taxaFrete = BigDecimal.ZERO;
 
 	/*
@@ -59,12 +59,13 @@ public class Restaurante {
 	 */
 //	@JsonIgnore
 	@ManyToOne
-	@JoinColumn(name = "cozinha_id", nullable = false)
+	@JoinColumn(name = "cozinha_id", nullable = false, foreignKey = @ForeignKey(name = "restaurante_cozinha_fk"))
+
 	@JsonIgnoreProperties("hibernateLazyInitializer")
 	private Cozinha cozinha;
 
 	@ManyToMany
-	@JoinTable(name = "restaurante_forma_pagamento", joinColumns = @JoinColumn(name = "restaurante_id"), inverseJoinColumns = @JoinColumn(name = "forma_pagamento_id"))
+	@JoinTable(name = "restaurante_forma_pagamento", joinColumns = @JoinColumn(name = "restaurante_id", foreignKey = @ForeignKey(name = "restaurante_restaurante_forma_pagamentofk")), inverseJoinColumns = @JoinColumn(name = "forma_pagamento_id", foreignKey = @ForeignKey(name = "forma_pagamento_id_fk")))
 	@JsonIgnore
 	private List<FormaPagamento> formasPagamento = new ArrayList<>();
 
