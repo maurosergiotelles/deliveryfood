@@ -10,12 +10,15 @@ import org.springframework.stereotype.Service;
 import com.deliveryfood.domain.exception.EntidadeChaveEstrangeiraNaoEncontradaException;
 import com.deliveryfood.domain.exception.EntidadeNaoEncontradaException;
 import com.deliveryfood.domain.model.Cidade;
-import com.deliveryfood.domain.model.Estado;
 import com.deliveryfood.domain.repository.CidadeRepository;
 import com.deliveryfood.domain.repository.EstadoRepository;
 
 @Service
 public class CidadeCadastroService {
+
+	private static final String ESTADO_COM_O_CÓDIGO_D_NÃO_ENCONTRADO = "Estado com o código %d não encontrado";
+
+	private static final String CIDADE_NÃO_ENCONTRADA_COM_O_CÓDIGO_D = "Cidade não encontrada com o código %d";
 
 	@Autowired
 	private CidadeRepository cidadeRepository;
@@ -24,41 +27,23 @@ public class CidadeCadastroService {
 	private EstadoRepository estadoRepository;
 
 	public List<Cidade> findAll() {
-		List<Cidade> cidades = cidadeRepository.findAll();
-		return cidades;
+		return cidadeRepository.findAll();
 	}
 
 	public Cidade findById(Long id) {
-		Optional<Cidade> optionalCidade = cidadeRepository.findById(id);
-
-		return optionalCidade.orElseThrow(
-				() -> new EntidadeNaoEncontradaException(String.format("Cidade não encontrada com o código %d", id)));
-
+		return this.buscarOuFalhar(id);
 	}
 
 	public Cidade incluir(Cidade cidade) {
-		Long estadoId = cidade.getEstado().getId();
-
-		Optional<Estado> optionalEstado = estadoRepository.findById(estadoId);
-
-		optionalEstado.orElseThrow(() -> new EntidadeNaoEncontradaException(
-				String.format("Estado com o código %d não encontrado", estadoId)));
+		estadoExisteOuFalha(cidade.getEstado().getId());
 
 		return cidadeRepository.save(cidade);
 	}
 
 	public Cidade alterar(Long id, Cidade cidade) {
-		Long estadoId = cidade.getEstado().getId();
+		estadoExisteOuFalha(cidade.getEstado().getId());
 
-		Optional<Estado> optionalEstado = estadoRepository.findById(estadoId);
-
-		optionalEstado.orElseThrow(() -> new EntidadeChaveEstrangeiraNaoEncontradaException(
-				String.format("Estado com código %d não existe", estadoId)));
-
-		Optional<Cidade> optionalCidade = cidadeRepository.findById(id);
-
-		Cidade cidadeEncontrada = optionalCidade.orElseThrow(
-				() -> new EntidadeNaoEncontradaException(String.format("Cidade com o código %d não encontrada", id)));
+		Cidade cidadeEncontrada = this.buscarOuFalhar(id);
 
 		BeanUtils.copyProperties(cidade, cidadeEncontrada, "id");
 
@@ -66,6 +51,23 @@ public class CidadeCadastroService {
 	}
 
 	public void deletar(Long id) {
+		if (!cidadeRepository.existsById(id)) {
+			throw new EntidadeNaoEncontradaException(String.format(CIDADE_NÃO_ENCONTRADA_COM_O_CÓDIGO_D, id));
+		}
 		cidadeRepository.deleteById(id);
+	}
+
+	public Cidade buscarOuFalhar(Long id) {
+		Optional<Cidade> optionalCidade = cidadeRepository.findById(id);
+
+		return optionalCidade.orElseThrow(
+				() -> new EntidadeNaoEncontradaException(String.format(CIDADE_NÃO_ENCONTRADA_COM_O_CÓDIGO_D, id)));
+	}
+
+	private void estadoExisteOuFalha(Long estadoId) {
+		if (!estadoRepository.existsById(estadoId)) {
+			throw new EntidadeChaveEstrangeiraNaoEncontradaException(
+					String.format(ESTADO_COM_O_CÓDIGO_D_NÃO_ENCONTRADO, estadoId));
+		}
 	}
 }
