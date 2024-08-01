@@ -46,19 +46,19 @@ public class EstadoController {
 	}
 
 	@PostMapping
-	public ResponseEntity<Estado> incluir(@RequestBody Estado estado) {
+	public ResponseEntity<Estado> adicionar(@RequestBody Estado estado) {
 
-		Estado estadoIncluido = cadastroEstado.incluir(estado);
+		Estado estadoIncluido = cadastroEstado.adicionar(estado);
 
 		return ResponseEntity.status(HttpStatus.CREATED).body(estadoIncluido);
 
 	}
 
 	@PutMapping("/{id}")
-	public ResponseEntity<?> alterar(@PathVariable Long id, @RequestBody Estado estado) {
+	public ResponseEntity<?> atualizar(@PathVariable Long id, @RequestBody Estado estado) {
 
 		try {
-			Estado estadoAlterado = cadastroEstado.alterar(id, estado);
+			Estado estadoAlterado = cadastroEstado.atualizar(id, estado);
 
 			return ResponseEntity.ok(estadoAlterado);
 		} catch (EntidadeNaoEncontradaException e) {

@@ -17,6 +17,8 @@ import org.springframework.web.bind.annotation.RestController;
 import com.deliveryfood.domain.model.Cozinha;
 import com.deliveryfood.domain.service.CadastroCozinhaService;
 
+import jakarta.validation.Valid;
+
 @RestController
 @RequestMapping("/cozinhas")
 /* @ResponseStatus(code = HttpStatus.CREATED) */
@@ -47,10 +49,9 @@ public class CozinhaController {
 	@GetMapping
 	@ResponseStatus(HttpStatus.OK)
 	public List<Cozinha> listar() {
-		if (true) {
-			throw new IllegalArgumentException("fdsafda");
-		}
-
+//		if (true) {
+//			throw new IllegalArgumentException("fdsafda");
+//		}
 		return cadastroCozinha.findAll();
 	}
 
@@ -63,14 +64,14 @@ public class CozinhaController {
 
 	@PostMapping
 	@ResponseStatus(HttpStatus.CREATED)
-	public Cozinha salvar(@RequestBody Cozinha cozinha) {
-		return cadastroCozinha.salvar(cozinha);
+	public Cozinha adicionar(@RequestBody @Valid Cozinha cozinha) {
+		return cadastroCozinha.adicionar(cozinha);
 	}
 
 	@PutMapping("/{id}")
 	@ResponseStatus(HttpStatus.OK)
-	public Cozinha alterar(@PathVariable Long id, @RequestBody Cozinha cozinha) {
-		return cadastroCozinha.alterar(id, cozinha);
+	public Cozinha atualizar(@PathVariable Long id, @RequestBody @Valid Cozinha cozinha) {
+		return cadastroCozinha.atualizar(id, cozinha);
 	}
 
 	@DeleteMapping("/{id}")

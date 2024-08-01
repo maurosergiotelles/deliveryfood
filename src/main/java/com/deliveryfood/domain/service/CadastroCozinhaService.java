@@ -21,11 +21,11 @@ public class CadastroCozinhaService {
 	@Autowired
 	private CozinhaRepository cozinhaRepository;
 
-	public Cozinha salvar(Cozinha cozinha) {
+	public Cozinha adicionar(Cozinha cozinha) {
 		return cozinhaRepository.save(cozinha);
 	}
 
-	public Cozinha alterar(Long id, Cozinha cozinha) {
+	public Cozinha atualizar(Long id, Cozinha cozinha) {
 		Cozinha cozinhaAtual = this.buscarOutFalhar(id);
 		BeanUtils.copyProperties(cozinha, cozinhaAtual, "id");
 

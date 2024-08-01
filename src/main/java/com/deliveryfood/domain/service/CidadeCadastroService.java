@@ -34,13 +34,13 @@ public class CidadeCadastroService {
 		return this.buscarOuFalhar(id);
 	}
 
-	public Cidade incluir(Cidade cidade) {
+	public Cidade adicionar(Cidade cidade) {
 		estadoExisteOuFalha(cidade.getEstado().getId());
 
 		return cidadeRepository.save(cidade);
 	}
 
-	public Cidade alterar(Long id, Cidade cidade) {
+	public Cidade atualizar(Long id, Cidade cidade) {
 		estadoExisteOuFalha(cidade.getEstado().getId());
 
 		Cidade cidadeEncontrada = this.buscarOuFalhar(id);

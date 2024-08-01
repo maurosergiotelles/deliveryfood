@@ -15,9 +15,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.deliveryfood.domain.exception.EntidadeChaveEstrangeiraNaoEncontradaException;
 import com.deliveryfood.domain.model.Cidade;
 import com.deliveryfood.domain.service.CidadeCadastroService;
+
+import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/cidades")
@@ -40,18 +41,14 @@ public class CidadeController {
 
 	@PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseStatus(HttpStatus.CREATED)
-	public Cidade incluir(@RequestBody Cidade cidade) {
-		try {
-			return cidadeCadastro.incluir(cidade);
-		} catch (Exception e) {
-			throw new EntidadeChaveEstrangeiraNaoEncontradaException(e.getMessage());
-		}
+	public Cidade adicionar(@RequestBody @Valid Cidade cidade) {
+		return cidadeCadastro.adicionar(cidade);
 	}
 
 	@PutMapping("/{id}")
 	@ResponseStatus(HttpStatus.OK)
-	public Cidade alterar(@PathVariable Long id, @RequestBody Cidade cidade) {
-		return cidadeCadastro.alterar(id, cidade);
+	public Cidade atualizar(@PathVariable Long id, @Valid @RequestBody Cidade cidade) {
+		return cidadeCadastro.atualizar(id, cidade);
 	}
 
 	@DeleteMapping("/{id}")

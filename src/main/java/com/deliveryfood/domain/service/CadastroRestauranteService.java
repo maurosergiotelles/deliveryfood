@@ -8,9 +8,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.deliveryfood.domain.exception.EntidadeChaveEstrangeiraNaoEncontradaException;
 import com.deliveryfood.domain.exception.EntidadeNaoEncontradaException;
-import com.deliveryfood.domain.model.Cozinha;
 import com.deliveryfood.domain.model.Restaurante;
 import com.deliveryfood.domain.repository.CozinhaRepository;
 import com.deliveryfood.domain.repository.RestauranteRepository;
@@ -24,9 +22,8 @@ public class CadastroRestauranteService {
 	@Autowired
 	private CozinhaRepository cozinhaRepository;
 
-	public List<Restaurante> findAllC() {
-		System.out.println("findAllC");
-		return restauranteRepository.findAllC();
+	public List<Restaurante> findAll() {
+		return restauranteRepository.findAllRestaurante();
 	}
 
 	public Restaurante findById(Long id) {
@@ -36,24 +33,21 @@ public class CadastroRestauranteService {
 				String.format("Restaurante com o código %d não encontrado", id)));
 	}
 
-	public Restaurante incluir(Restaurante restaurante) {
-		Long cozinhaId = restaurante.getCozinha().getId();
-		Optional<Cozinha> optionalCozinha = cozinhaRepository.findById(cozinhaId);
-
-		optionalCozinha.orElseThrow(() -> new EntidadeNaoEncontradaException(
-				String.format("Cozinha com código %d não foi encontrado", cozinhaId)));
+	public Restaurante adicionar(Restaurante restaurante) {
+		cozinhaExisteOuNaoEncontrada(restaurante.getCozinha().getId());
 
 		return restauranteRepository.save(restaurante);
-
 	}
 
-	public Restaurante alterar(Long restauranteId, Restaurante restaurante) {
-		Long cozinhaId = restaurante.getCozinha().getId();
+	private void cozinhaExisteOuNaoEncontrada(Long cozinhaId) {
+		if (!cozinhaRepository.existsById(cozinhaId)) {
+			throw new EntidadeNaoEncontradaException(
+					String.format("Cozinha com código %d não foi encontrado.", cozinhaId));
+		}
+	}
 
-		Optional<Cozinha> optionalCozinha = cozinhaRepository.findById(cozinhaId);
-
-		optionalCozinha.orElseThrow(() -> new EntidadeChaveEstrangeiraNaoEncontradaException(
-				String.format("Cozinha com o código %d não encontrada", cozinhaId)));
+	public Restaurante atualizar(Long restauranteId, Restaurante restaurante) {
+		cozinhaExisteOuNaoEncontrada(restaurante.getCozinha().getId());
 
 		Optional<Restaurante> optionalRestaurante = restauranteRepository.findById(restauranteId);
 

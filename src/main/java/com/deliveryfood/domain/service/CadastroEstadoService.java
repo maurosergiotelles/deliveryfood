@@ -29,11 +29,11 @@ public class CadastroEstadoService {
 				() -> new EntidadeNaoEncontradaException(String.format("Estado com o código %d não encontrado", id)));
 	}
 
-	public Estado incluir(Estado estado) {
+	public Estado adicionar(Estado estado) {
 		return estadoRepository.save(estado);
 	}
 
-	public Estado alterar(Long id, Estado estado) {
+	public Estado atualizar(Long id, Estado estado) {
 		Optional<Estado> optionalEstado = estadoRepository.findById(id);
 		Estado estadoLocalizado = optionalEstado.orElseThrow(() -> new EntidadeNaoEncontradaException(
 				String.format("Estado com o código %d não foi encontrado", id)));
