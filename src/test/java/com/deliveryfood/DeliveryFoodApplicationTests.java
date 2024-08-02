@@ -10,7 +10,6 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.web.servlet.MockMvc;
 
 import com.deliveryfood.domain.model.Cozinha;
 import com.deliveryfood.domain.repository.CozinhaRepository;
@@ -23,8 +22,8 @@ class DeliveryFoodApplicationTests {
 //	@Autowired
 //	private static DatabaseCleaner databaseCleaner;
 
-	@Autowired
-	private MockMvc mockMvc;
+//	@Autowired
+//	private MockMvc mockMvc;
 	@Autowired
 	private CozinhaRepository cozinhaRepository;
 

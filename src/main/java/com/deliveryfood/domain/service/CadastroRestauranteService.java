@@ -3,11 +3,15 @@ package com.deliveryfood.domain.service;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
-import org.springframework.beans.BeanUtils;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import com.deliveryfood.api.model.RestauranteModel;
+import com.deliveryfood.api.model.input.RestauranteInput;
 import com.deliveryfood.domain.exception.EntidadeNaoEncontradaException;
 import com.deliveryfood.domain.model.Restaurante;
 import com.deliveryfood.domain.repository.CozinhaRepository;
@@ -17,26 +21,37 @@ import com.deliveryfood.domain.repository.RestauranteRepository;
 public class CadastroRestauranteService {
 
 	@Autowired
+	private ModelMapper modelMapper;
+
+	@Autowired
 	private RestauranteRepository restauranteRepository;
 
 	@Autowired
 	private CozinhaRepository cozinhaRepository;
 
-	public List<Restaurante> findAll() {
-		return restauranteRepository.findAllRestaurante();
+	public List<RestauranteModel> findAll() {
+		List<Restaurante> restaurantes = restauranteRepository.findAllRestaurante();
+
+		return restaurantes.stream().map(restaurante -> modelMapper.map(restaurante, RestauranteModel.class))
+				.collect(Collectors.toList());
 	}
 
-	public Restaurante findById(Long id) {
-		Optional<Restaurante> optionalRestaurante = restauranteRepository.findById(id);
+	public RestauranteModel findById(Long id) {
 
-		return optionalRestaurante.orElseThrow(() -> new EntidadeNaoEncontradaException(
-				String.format("Restaurante com o código %d não encontrado", id)));
+		Restaurante restaurante = buscarOuFalhar(id);
+
+		return modelMapper.map(restaurante, RestauranteModel.class);
 	}
 
-	public Restaurante adicionar(Restaurante restaurante) {
-		cozinhaExisteOuNaoEncontrada(restaurante.getCozinha().getId());
+	@Transactional
+	public RestauranteModel adicionar(RestauranteInput restauranteInput) {
+		cozinhaExisteOuNaoEncontrada(restauranteInput.getCozinha().getId());
 
-		return restauranteRepository.save(restaurante);
+		Restaurante restaurante = modelMapper.map(restauranteInput, Restaurante.class);
+
+		Restaurante restauranteSaved = restauranteRepository.save(restaurante);
+
+		return modelMapper.map(restauranteSaved, RestauranteModel.class);
 	}
 
 	private void cozinhaExisteOuNaoEncontrada(Long cozinhaId) {
@@ -46,17 +61,34 @@ public class CadastroRestauranteService {
 		}
 	}
 
-	public Restaurante atualizar(Long restauranteId, Restaurante restaurante) {
-		cozinhaExisteOuNaoEncontrada(restaurante.getCozinha().getId());
+	@Transactional
+	public void ativar(Long restauranteId) {
+		Restaurante restaurante = this.buscarOuFalhar(restauranteId);
+		restaurante.ativar();
+	}
 
+	@Transactional
+	public void inativar(Long restauranteId) {
+		Restaurante restaurante = this.buscarOuFalhar(restauranteId);
+		restaurante.inativar();
+	}
+
+	@Transactional
+	public RestauranteModel atualizar(Long restauranteId, RestauranteInput restauranteInput) {
+		cozinhaExisteOuNaoEncontrada(restauranteInput.getCozinha().getId());
+
+		Restaurante restauranteEncontrado = buscarOuFalhar(restauranteId);
+		modelMapper.map(restauranteInput, restauranteEncontrado);
+
+		Restaurante restauranteSalvo = restauranteRepository.save(restauranteEncontrado);
+		return modelMapper.map(restauranteSalvo, RestauranteModel.class);
+	}
+
+	private Restaurante buscarOuFalhar(Long restauranteId) {
 		Optional<Restaurante> optionalRestaurante = restauranteRepository.findById(restauranteId);
 
-		Restaurante restauranteEncontrado = optionalRestaurante.orElseThrow(() -> new EntidadeNaoEncontradaException(
+		return optionalRestaurante.orElseThrow(() -> new EntidadeNaoEncontradaException(
 				String.format("Restaurante com o código %d não encontrado", restauranteId)));
-
-		BeanUtils.copyProperties(restaurante, restauranteEncontrado, "id", "formasPagamento", "endereco",
-				"dataCadastro", "produto");
-		return restauranteRepository.save(restauranteEncontrado);
 	}
 
 	public List<Restaurante> findByBetweenTaxaInicialETaxaFinal(BigDecimal taxaInicial, BigDecimal taxaFinal) {
@@ -74,5 +106,4 @@ public class CadastroRestauranteService {
 	public List<Restaurante> findComFreteGratis(String nome) {
 		return restauranteRepository.findComFreteGratis(nome);
 	}
-
 }

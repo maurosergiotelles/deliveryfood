@@ -26,7 +26,10 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 import com.deliveryfood.domain.exception.EntidadeChaveEstrangeiraNaoEncontradaException;
+import com.deliveryfood.domain.exception.EntidadeEmUsoException;
 import com.deliveryfood.domain.exception.EntidadeNaoEncontradaException;
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.exc.IgnoredPropertyException;
 import com.fasterxml.jackson.databind.exc.InvalidFormatException;
 import com.fasterxml.jackson.databind.exc.UnrecognizedPropertyException;
 
@@ -125,6 +128,10 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
 		} else if (rootCause instanceof UnrecognizedPropertyException) {
 			return handleUnrecognizedPropertyException((UnrecognizedPropertyException) rootCause, headers, status,
 					request);
+		} else if (rootCause instanceof IgnoredPropertyException) {
+			return handleUnrecognizedPropertyException((IgnoredPropertyException) rootCause, headers, status, request);
+		} else if (rootCause instanceof JsonParseException) {
+			return handleUnrecognizedPropertyException((JsonParseException) rootCause, headers, status, request);
 		}
 
 		Problem problem = Problem.builder()
@@ -139,6 +146,43 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
 
 		return handleExceptionInternal(ex, problem, new HttpHeaders(), status, request);
 
+	}
+
+	private ResponseEntity<Object> handleUnrecognizedPropertyException(JsonParseException ex, HttpHeaders headers,
+			HttpStatusCode status, WebRequest request) {
+
+		Problem problem = Problem.builder()
+
+				.status(status.value())
+
+				.type("https://deliveryfood/entidade-nao-encontrada")
+
+				.title("Problema na estrutura do json")
+
+				.detail(ex.getMessage()).build();
+
+		return handleExceptionInternal(ex, problem, headers, status, request);
+	}
+
+	private ResponseEntity<Object> handleUnrecognizedPropertyException(IgnoredPropertyException ex, HttpHeaders headers,
+			HttpStatusCode status, WebRequest request) {
+		ex.getPath().forEach(ref -> System.out.println(ref.getFieldName()));
+
+		String path = ex.getPath().stream().map(ref -> ref.getFieldName()).collect(Collectors.joining("."));
+
+		Problem problem = Problem.builder()
+
+				.status(status.value())
+
+				.type("https://deliveryfood/entidade-nao-encontrada")
+
+				.title("Mensagem incompreensível")
+
+				.detail(String.format(
+						"A propriedade '%s' não existe. Corrija ou remova essa propriedade e tente novamente", path))
+				.build();
+
+		return handleExceptionInternal(ex, problem, headers, status, request);
 	}
 
 	private ResponseEntity<Object> handleUnrecognizedPropertyException(UnrecognizedPropertyException ex,
@@ -207,6 +251,24 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
 	public ResponseEntity<?> tratarChaveEstrageiraNaoEncontarada(
 			EntidadeChaveEstrangeiraNaoEncontradaException exception, WebRequest request) {
 		HttpStatus status = HttpStatus.BAD_REQUEST;
+		Problem problem = Problem.builder()
+
+				.status(status.value())
+
+				.type("https://deliveryfood/bad_reques")
+
+				.title("Entidade não encontrada")
+
+				.detail(exception.getMessage()).build();
+
+		return handleExceptionInternal(exception, problem, new HttpHeaders(), status, request);
+
+	}
+
+	@ExceptionHandler(EntidadeEmUsoException.class)
+	public ResponseEntity<?> tratarEntidadeEmUsoException(EntidadeEmUsoException exception, WebRequest request) {
+		HttpStatus status = HttpStatus.CONFLICT;
+
 		Problem problem = Problem.builder()
 
 				.status(status.value())

@@ -7,6 +7,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.deliveryfood.domain.exception.EntidadeEmUsoException;
 import com.deliveryfood.domain.exception.EntidadeNaoEncontradaException;
@@ -32,6 +33,7 @@ public class CadastroCozinhaService {
 		return cozinhaRepository.save(cozinhaAtual);
 	}
 
+	@Transactional
 	public void excluir(Long id) {
 		if (!cozinhaRepository.existsById(id)) {
 			throw new EntidadeNaoEncontradaException(String.format(COZINHA_COM_O_CÓDIGO_D_NÃO_ENCONTRADA, id));
@@ -39,6 +41,8 @@ public class CadastroCozinhaService {
 
 		try {
 			cozinhaRepository.deleteById(id);
+			cozinhaRepository.flush();
+
 		} catch (DataIntegrityViolationException e) {
 			throw new EntidadeEmUsoException(String.format(COZINHA_COM_O_CÓDIGO_D_ESTÁ_EM_USO, id));
 		}

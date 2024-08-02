@@ -11,11 +11,13 @@ import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 
 @Data
 @EqualsAndHashCode(of = { "id" })
 @Entity
 @Table(name = "estado")
+@NoArgsConstructor
 public class Estado {
 
 	@Id
