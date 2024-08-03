@@ -42,6 +42,14 @@ public class Usuario {
 	@Column(name = "data_cadastro", nullable = false, columnDefinition = "datetime")
 	private LocalDateTime dataCadastro;
 
+	public boolean senhaCoincideCom(String senha) {
+		return this.getSenha().equals(senha);
+	}
+
+	public boolean senhaNaoCoincideCom(String senha) {
+		return !this.senhaCoincideCom(senha);
+	}
+
 	@ManyToMany
 	@JoinTable(name = "usuario_grupo", joinColumns = @JoinColumn(name = "usuario_id", foreignKey = @ForeignKey(name = "usuario_usuario_grupo_fk")), inverseJoinColumns = @JoinColumn(name = "grupo_id", foreignKey = @ForeignKey(name = "usuario_grupo_fk")))
 	private List<Grupo> grupos = new ArrayList<>();

@@ -26,11 +26,12 @@ public class Grupo {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@JsonIgnore
 	private Long id;
+
 	@Column(nullable = false, length = 60)
 	private String nome;
 
+	@JsonIgnore
 	@ManyToMany
 	@JoinTable(name = "grupo_permissao", joinColumns = @JoinColumn(name = "grupo_id", foreignKey = @ForeignKey(name = "grupo_grupo_permissao_fk")), inverseJoinColumns = @JoinColumn(name = "permissao_id", foreignKey = @ForeignKey(name = "permissao_grupo_permissao_fk")))
 	private List<Permissao> permissoes = new ArrayList<>();

@@ -9,7 +9,6 @@ import lombok.NoArgsConstructor;
 
 @Data
 @NoArgsConstructor
-
 @Embeddable
 public class Endereco {
 

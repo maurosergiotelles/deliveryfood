@@ -18,6 +18,6 @@ public class EnderecoModel {
 
 	private String bairro;
 
-	private CidadeModel cidade;
+	private CidadeResumoModel cidade;
 
 }

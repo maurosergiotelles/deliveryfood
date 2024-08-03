@@ -1,6 +1,7 @@
 package com.deliveryfood.domain.model;
 
 import com.deliveryfood.core.validation.Groups;
+import com.fasterxml.jackson.databind.ser.std.StdKeySerializers.Default;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -14,7 +15,6 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.groups.ConvertGroup;
-import jakarta.validation.groups.Default;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;

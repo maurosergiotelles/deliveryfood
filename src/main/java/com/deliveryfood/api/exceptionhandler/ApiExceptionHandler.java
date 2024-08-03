@@ -28,6 +28,7 @@ import org.springframework.web.servlet.resource.NoResourceFoundException;
 import com.deliveryfood.domain.exception.EntidadeChaveEstrangeiraNaoEncontradaException;
 import com.deliveryfood.domain.exception.EntidadeEmUsoException;
 import com.deliveryfood.domain.exception.EntidadeNaoEncontradaException;
+import com.deliveryfood.domain.exception.UsuarioAlterarSenhaException;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.exc.IgnoredPropertyException;
 import com.fasterxml.jackson.databind.exc.InvalidFormatException;
@@ -122,7 +123,7 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
 			HttpHeaders headers, HttpStatusCode status, WebRequest request) {
 
 		Throwable rootCause = ExceptionUtils.getRootCause(ex);
-		ex.printStackTrace();
+
 		if (rootCause instanceof InvalidFormatException) {
 			return handleInvalidFormatException((InvalidFormatException) rootCause, headers, status, request);
 		} else if (rootCause instanceof UnrecognizedPropertyException) {
@@ -360,6 +361,24 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
 				.build();
 
 		return handleExceptionInternal(ex, problem, new HttpHeaders(), status, request);
+	}
+
+	@ExceptionHandler({ UsuarioAlterarSenhaException.class })
+	public ResponseEntity<?> tratarUsuarioAlterarSenhaException(UsuarioAlterarSenhaException exception,
+			WebRequest request) {
+
+		HttpStatus status = HttpStatus.NOT_FOUND;
+		Problem problem = Problem.builder()
+
+				.status(status.value())
+
+				.type("https://deliveryfood/senha-errada")
+
+				.title("Entidade não encontrada")
+
+				.detail(exception.getMessage()).build();
+
+		return handleExceptionInternal(exception, problem, new HttpHeaders(), status, request);
 	}
 
 }
