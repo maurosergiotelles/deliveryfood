@@ -48,16 +48,14 @@ public class UsuarioController {
 
 	@PutMapping("/{id}")
 	@ResponseStatus(HttpStatus.OK)
-	public UsuarioModel atualizar(@PathVariable Long id,
-			@RequestBody @Valid UsuarioInputAtualizar usuarioInputAtualizar) {
+	public UsuarioModel atualizar(@PathVariable Long id, @RequestBody @Valid UsuarioInputAtualizar usuarioInputAtualizar) {
 
 		return cadastroUsuario.atualizar(id, usuarioInputAtualizar);
 	}
 
 	@PutMapping("/alterar-senha/{id}")
 	@ResponseStatus(HttpStatus.NO_CONTENT)
-	public void alterarSenha(@PathVariable Long id,
-			@RequestBody @Valid UsuarioInputAlterarSenha usuarioInputAlterarSenha) {
+	public void alterarSenha(@PathVariable Long id, @RequestBody @Valid UsuarioInputAlterarSenha usuarioInputAlterarSenha) {
 		cadastroUsuario.alterarSenha(id, usuarioInputAlterarSenha);
 	}
 

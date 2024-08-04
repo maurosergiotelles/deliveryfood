@@ -2,6 +2,8 @@ package com.deliveryfood.domain.model;
 
 import java.math.BigDecimal;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.ForeignKey;
@@ -34,6 +36,7 @@ public class Produto {
 
 	private Boolean ativo;
 
+	@JsonIgnore
 	@ManyToOne
 	@JoinColumn(name = "restaurante_id", nullable = false, foreignKey = @ForeignKey(name = "produto_restaurante_fk"))
 	private Restaurante restaurante;

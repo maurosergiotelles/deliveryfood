@@ -1,8 +1,8 @@
 package com.deliveryfood.domain.model;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.hibernate.annotations.CreationTimestamp;
 
@@ -52,5 +52,15 @@ public class Usuario {
 
 	@ManyToMany
 	@JoinTable(name = "usuario_grupo", joinColumns = @JoinColumn(name = "usuario_id", foreignKey = @ForeignKey(name = "usuario_usuario_grupo_fk")), inverseJoinColumns = @JoinColumn(name = "grupo_id", foreignKey = @ForeignKey(name = "usuario_grupo_fk")))
-	private List<Grupo> grupos = new ArrayList<>();
+	private Set<Grupo> grupos = new HashSet<>();
+
+	public void adicionarGrupo(Grupo grupo) {
+		this.getGrupos().add(grupo);
+	}
+
+	public void removerGrupo(Grupo grupo) {
+		this.getGrupos().remove(grupo);
+
+	}
+
 }

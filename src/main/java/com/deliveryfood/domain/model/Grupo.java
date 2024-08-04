@@ -1,7 +1,7 @@
 package com.deliveryfood.domain.model;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -34,6 +34,13 @@ public class Grupo {
 	@JsonIgnore
 	@ManyToMany
 	@JoinTable(name = "grupo_permissao", joinColumns = @JoinColumn(name = "grupo_id", foreignKey = @ForeignKey(name = "grupo_grupo_permissao_fk")), inverseJoinColumns = @JoinColumn(name = "permissao_id", foreignKey = @ForeignKey(name = "permissao_grupo_permissao_fk")))
-	private List<Permissao> permissoes = new ArrayList<>();
+	private Set<Permissao> permissoes = new HashSet<>();
 
+	public void adicionarPermissao(Permissao permissao) {
+		this.getPermissoes().add(permissao);
+	}
+
+	public void removerPermissao(Permissao permissao) {
+		this.getPermissoes().remove(permissao);
+	}
 }

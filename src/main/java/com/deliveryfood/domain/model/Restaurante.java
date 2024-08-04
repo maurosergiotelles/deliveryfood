@@ -3,7 +3,9 @@ package com.deliveryfood.domain.model;
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -45,6 +47,8 @@ public class Restaurante {
 
 	private Boolean ativo = Boolean.TRUE;
 
+	private Boolean aberto = Boolean.TRUE;
+
 	@ManyToOne
 	@JoinColumn(name = "cozinha_id", nullable = false, foreignKey = @ForeignKey(name = "restaurante_cozinha_fk"))
 	private Cozinha cozinha;
@@ -58,8 +62,8 @@ public class Restaurante {
 	private OffsetDateTime dataAtualizacao;
 
 	@ManyToMany
-	@JoinTable(name = "restaurante_forma_pagamento", joinColumns = @JoinColumn(name = "restaurante_id", foreignKey = @ForeignKey(name = "restaurante_restaurante_forma_pagamentofk")), inverseJoinColumns = @JoinColumn(name = "forma_pagamento_id", foreignKey = @ForeignKey(name = "forma_pagamento_id_fk")))
-	private List<FormaPagamento> formasPagamento = new ArrayList<>();
+	@JoinTable(name = "restaurante_forma_pagamento", joinColumns = @JoinColumn(name = "restaurante_id"), inverseJoinColumns = @JoinColumn(name = "forma_pagamento_id"))
+	private Set<FormaPagamento> formasPagamento = new HashSet<>();
 
 	@Embedded
 	private Endereco endereco;
@@ -73,5 +77,34 @@ public class Restaurante {
 
 	public void inativar() {
 		this.setAtivo(Boolean.FALSE);
+	}
+
+	public boolean desassociarFormaPagamento(FormaPagamento formaPagamento) {
+		return getFormasPagamento().remove(formaPagamento);
+	}
+
+	public boolean associarFormaPagamento(FormaPagamento formaPagamento) {
+		return getFormasPagamento().add(formaPagamento);
+	}
+
+	public void fechar() {
+		this.setAberto(Boolean.FALSE);
+	}
+
+	public void abrir() {
+		this.setAberto(Boolean.TRUE);
+	}
+
+	@ManyToMany
+	@JoinTable(name = "restaurante_usuario_responsavel", joinColumns = @JoinColumn(name = "restaurante_id", foreignKey = @ForeignKey(name = "restaurante_fk")), inverseJoinColumns = @JoinColumn(name = "usuario_id", foreignKey = @ForeignKey(name = "usuario_fk")))
+	private Set<Usuario> responsaveis = new HashSet<>();
+
+	public void adicionarResponsavel(Usuario usuario) {
+		this.getResponsaveis().add(usuario);
+	}
+
+	public void removerResponsavel(Usuario usuario) {
+		this.getResponsaveis().remove(usuario);
+
 	}
 }

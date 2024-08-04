@@ -28,23 +28,18 @@ public class CadastroFormaPagamentoService {
 	private FormaPagamentoRepository formaPagamentoRepository;
 
 	public FormaPagamentoModel findById(Long id) {
-		FormaPagamento formaPagamento = formaPagamentoRepository.findById(id)
-				.orElseThrow(() -> new EntidadeNaoEncontradaException(
-						String.format(FORMA_DE_PAGAMENTO_NÃO_ENCONTRADA_COM_O_ID_D, id)));
+		FormaPagamento formaPagamento = buscarOuFalhar(id);
 
 		return modelMapper.map(formaPagamento, FormaPagamentoModel.class);
 	}
 
 	public List<FormaPagamentoModel> findAll() {
 		List<FormaPagamento> formasPagamento = formaPagamentoRepository.findAll();
-		return formasPagamento.stream()
-				.map(formaPagamento -> modelMapper.map(formaPagamento, FormaPagamentoModel.class))
-				.collect(Collectors.toList());
+		return formasPagamento.stream().map(formaPagamento -> modelMapper.map(formaPagamento, FormaPagamentoModel.class)).collect(Collectors.toList());
 	}
 
 	@Transactional
 	public FormaPagamentoModel adicionar(FormaPagamentoInput formaPagamentoInput) {
-
 		FormaPagamento formaPagamento = modelMapper.map(formaPagamentoInput, FormaPagamento.class);
 
 		FormaPagamento formaPagamentoSalva = formaPagamentoRepository.save(formaPagamento);
@@ -53,22 +48,22 @@ public class CadastroFormaPagamentoService {
 
 	@Transactional
 	public FormaPagamentoModel atualizar(Long id, FormaPagamentoInput formaPagamentoInput) {
-
-		FormaPagamento formaPagamento = formaPagamentoRepository.findById(id)
-				.orElseThrow(() -> new EntidadeNaoEncontradaException(
-						String.format(FORMA_DE_PAGAMENTO_NÃO_ENCONTRADA_COM_O_ID_D, id)));
+		FormaPagamento formaPagamento = buscarOuFalhar(id);
 
 		modelMapper.map(formaPagamentoInput, formaPagamento);
 
 		return modelMapper.map(formaPagamento, FormaPagamentoModel.class);
 	}
 
+	public FormaPagamento buscarOuFalhar(Long id) {
+		return formaPagamentoRepository.findById(id).orElseThrow(() -> new EntidadeNaoEncontradaException(String.format(FORMA_DE_PAGAMENTO_NÃO_ENCONTRADA_COM_O_ID_D, id)));
+	}
+
 	@Transactional
 	public void deletar(Long id) {
 		try {
 			if (!formaPagamentoRepository.existsById(id)) {
-				throw new EntidadeNaoEncontradaException(
-						String.format(FORMA_DE_PAGAMENTO_NÃO_ENCONTRADA_COM_O_ID_D, id));
+				throw new EntidadeNaoEncontradaException(String.format(FORMA_DE_PAGAMENTO_NÃO_ENCONTRADA_COM_O_ID_D, id));
 			}
 
 			formaPagamentoRepository.deleteById(id);
