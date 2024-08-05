@@ -12,7 +12,9 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.ForeignKey;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -34,7 +36,7 @@ public class Pedido {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
-	@Column(name = "sub_total", nullable = false)
+	@Column(nullable = false)
 	private BigDecimal subtotal;
 
 	@Column(name = "taxa_frete", nullable = false)
@@ -56,7 +58,7 @@ public class Pedido {
 	@Column(name = "data_entrega")
 	private LocalDateTime dataEntrega;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "forma_pagamento_id", nullable = false, foreignKey = @ForeignKey(name = "pedido_forma_pagamento_fk"))
 	@JsonIgnore
 	private FormaPagamento formaPagamento;
@@ -65,21 +67,34 @@ public class Pedido {
 	@JoinColumn(name = "restaurante_id", nullable = false, foreignKey = @ForeignKey(name = "pedido_restaurante_fk"))
 	private Restaurante restaurante;
 
-	@ManyToOne
-	@JoinColumn(name = "cliente_id", nullable = false, foreignKey = @ForeignKey(name = "pedido_cliente_fk"))
-	private Cliente cliente;
+//	@ManyToOne
+//	@JoinColumn(name = "usuario_cliente_id", nullable = false, foreignKey = @ForeignKey(name = "pedido_cliente_fk"))
+//	private Cliente cliente;
 
-	@Enumerated
-	@Column(name = "status_pedido", nullable = false)
+	@Enumerated(EnumType.STRING)
+	@Column(name = "status", nullable = false)
 	private StatusPedido statusPedido;
 
 	@ManyToOne
-	@JoinColumn(name = "usuario_id", nullable = false, foreignKey = @ForeignKey(name = "pedido_usuario_fk"))
-	private Usuario usuario;
+	@JoinColumn(name = "usuario_cliente_id", nullable = false, foreignKey = @ForeignKey(name = "pedido_usuario_fk"))
+	private Usuario cliente;
 
 	@Embedded
 	private Endereco enderecoEntrega;
 
 	@OneToMany(mappedBy = "pedido")
-	private List<ItemPedido> itensPedido = new ArrayList<>();
+	private List<ItemPedido> itens = new ArrayList<>();
+
+	public void calcularValorTotal() {
+		this.subtotal = this.getItens().stream().map(item -> item.getPrecoTotal()).reduce(BigDecimal.ZERO, BigDecimal::add);
+		this.valorTotal = this.subtotal.add(this.taxaFrete);
+	}
+
+	public void definirFrete() {
+		this.setTaxaFrete(this.getRestaurante().getTaxaFrete());
+	}
+
+	public void atribuirPedidoAosItens() {
+		this.getItens().forEach(item -> item.setPedido(this));
+	}
 }

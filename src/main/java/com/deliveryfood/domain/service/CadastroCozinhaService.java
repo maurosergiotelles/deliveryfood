@@ -22,10 +22,12 @@ public class CadastroCozinhaService {
 	@Autowired
 	private CozinhaRepository cozinhaRepository;
 
+	@Transactional
 	public Cozinha adicionar(Cozinha cozinha) {
 		return cozinhaRepository.save(cozinha);
 	}
 
+	@Transactional
 	public Cozinha atualizar(Long id, Cozinha cozinha) {
 		Cozinha cozinhaAtual = this.buscarOutFalhar(id);
 		BeanUtils.copyProperties(cozinha, cozinhaAtual, "id");
@@ -63,8 +65,6 @@ public class CadastroCozinhaService {
 	public Cozinha buscarOutFalhar(Long id) {
 		Optional<Cozinha> optionalCozinha = cozinhaRepository.findById(id);
 
-		return optionalCozinha.orElseThrow(
-				() -> new EntidadeNaoEncontradaException(String.format(COZINHA_COM_O_CÓDIGO_D_NÃO_ENCONTRADA, id)));
-
+		return optionalCozinha.orElseThrow(() -> new EntidadeNaoEncontradaException(String.format(COZINHA_COM_O_CÓDIGO_D_NÃO_ENCONTRADA, id)));
 	}
 }

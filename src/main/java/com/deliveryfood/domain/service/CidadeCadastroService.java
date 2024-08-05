@@ -6,6 +6,7 @@ import java.util.Optional;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.deliveryfood.domain.exception.EntidadeChaveEstrangeiraNaoEncontradaException;
 import com.deliveryfood.domain.exception.EntidadeNaoEncontradaException;
@@ -27,19 +28,21 @@ public class CidadeCadastroService {
 	private EstadoRepository estadoRepository;
 
 	public List<Cidade> findAll() {
-		return cidadeRepository.findAll();
+		return cidadeRepository.findAllCidades();
 	}
 
 	public Cidade findById(Long id) {
 		return this.buscarOuFalhar(id);
 	}
 
+	@Transactional
 	public Cidade adicionar(Cidade cidade) {
 		estadoExisteOuFalha(cidade.getEstado().getId());
 
 		return cidadeRepository.save(cidade);
 	}
 
+	@Transactional
 	public Cidade atualizar(Long id, Cidade cidade) {
 		estadoExisteOuFalha(cidade.getEstado().getId());
 
@@ -50,6 +53,7 @@ public class CidadeCadastroService {
 		return cidadeRepository.save(cidadeEncontrada);
 	}
 
+	@Transactional
 	public void deletar(Long id) {
 		if (!cidadeRepository.existsById(id)) {
 			throw new EntidadeNaoEncontradaException(String.format(CIDADE_NÃO_ENCONTRADA_COM_O_CÓDIGO_D, id));
@@ -60,14 +64,12 @@ public class CidadeCadastroService {
 	public Cidade buscarOuFalhar(Long id) {
 		Optional<Cidade> optionalCidade = cidadeRepository.findById(id);
 
-		return optionalCidade.orElseThrow(
-				() -> new EntidadeNaoEncontradaException(String.format(CIDADE_NÃO_ENCONTRADA_COM_O_CÓDIGO_D, id)));
+		return optionalCidade.orElseThrow(() -> new EntidadeNaoEncontradaException(String.format(CIDADE_NÃO_ENCONTRADA_COM_O_CÓDIGO_D, id)));
 	}
 
 	private void estadoExisteOuFalha(Long estadoId) {
 		if (!estadoRepository.existsById(estadoId)) {
-			throw new EntidadeChaveEstrangeiraNaoEncontradaException(
-					String.format(ESTADO_COM_O_CÓDIGO_D_NÃO_ENCONTRADO, estadoId));
+			throw new EntidadeChaveEstrangeiraNaoEncontradaException(String.format(ESTADO_COM_O_CÓDIGO_D_NÃO_ENCONTRADO, estadoId));
 		}
 	}
 }

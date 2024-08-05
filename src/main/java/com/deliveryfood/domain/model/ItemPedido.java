@@ -32,6 +32,8 @@ public class ItemPedido {
 	@Column(name = "preco_unitario", nullable = false)
 	private BigDecimal precoUnitario;
 
+	private BigDecimal precoTotal;
+
 	@Column(length = 255)
 	private String observacao;
 
