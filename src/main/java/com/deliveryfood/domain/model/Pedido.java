@@ -4,11 +4,13 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import org.hibernate.annotations.CreationTimestamp;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
@@ -22,6 +24,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -35,6 +38,8 @@ public class Pedido {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
+
+	private String codigo = gerarCodigo();
 
 	@Column(nullable = false)
 	private BigDecimal subtotal;
@@ -73,7 +78,7 @@ public class Pedido {
 
 	@Enumerated(EnumType.STRING)
 	@Column(name = "status", nullable = false)
-	private StatusPedido statusPedido;
+	private StatusPedido statusPedido = StatusPedido.CRIADO;
 
 	@ManyToOne
 	@JoinColumn(name = "usuario_cliente_id", nullable = false, foreignKey = @ForeignKey(name = "pedido_usuario_fk"))
@@ -82,18 +87,24 @@ public class Pedido {
 	@Embedded
 	private Endereco enderecoEntrega;
 
-	@OneToMany(mappedBy = "pedido")
+	@OneToMany(mappedBy = "pedido", cascade = CascadeType.ALL)
 	private List<ItemPedido> itens = new ArrayList<>();
 
 	public void calcularValorTotal() {
+		this.getItens().forEach(ItemPedido::calcularPrecoTotal);
 		this.subtotal = this.getItens().stream().map(item -> item.getPrecoTotal()).reduce(BigDecimal.ZERO, BigDecimal::add);
 		this.valorTotal = this.subtotal.add(this.taxaFrete);
+	}
+
+	private String gerarCodigo() {
+		return UUID.randomUUID().toString();
 	}
 
 	public void definirFrete() {
 		this.setTaxaFrete(this.getRestaurante().getTaxaFrete());
 	}
 
+	@PrePersist
 	public void atribuirPedidoAosItens() {
 		this.getItens().forEach(item -> item.setPedido(this));
 	}

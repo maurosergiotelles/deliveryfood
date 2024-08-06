@@ -37,6 +37,21 @@ public class ItemPedido {
 	@Column(length = 255)
 	private String observacao;
 
+	public void calcularPrecoTotal() {
+		BigDecimal precoUnitario = this.getPrecoUnitario();
+		Long quantidade = this.getQuantidade();
+
+		if (precoUnitario == null) {
+			precoUnitario = BigDecimal.ZERO;
+		}
+
+		if (quantidade == null) {
+			quantidade = 0L;
+		}
+
+		this.setPrecoTotal(precoUnitario.multiply(new BigDecimal(quantidade)));
+	}
+
 	@JsonIgnore
 	@ManyToOne
 	@JoinColumn(name = "pedido_id", foreignKey = @ForeignKey(name = "pedido_item_fk"), nullable = false)
