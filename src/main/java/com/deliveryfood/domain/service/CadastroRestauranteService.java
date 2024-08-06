@@ -236,4 +236,8 @@ public class CadastroRestauranteService {
 
 	}
 
+	public List<ProdutoModel> findAtivosByRestaurante(Long restauranteId) {
+		return cadastroProduto.findAtivosByRestaurante(restauranteId);
+	}
+
 }

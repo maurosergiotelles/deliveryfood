@@ -15,6 +15,14 @@ public class RestauranteFactorySpecs {
 	}
 
 	public static Specification<Restaurante> comNomeSemelhante(String nome) {
-		return (root, query, builder) -> builder.like(root.get("nome"), "%" + nome + "%");
+
+		return (root, query, builder) -> {
+
+//			root.fetch("produto").fetch("");
+//			root.fetch("fds");
+
+			return builder.like(root.get("nome"), "%" + nome + "%");
+
+		};
 	}
 }

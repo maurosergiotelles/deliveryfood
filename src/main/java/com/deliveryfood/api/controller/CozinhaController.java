@@ -3,6 +3,9 @@ package com.deliveryfood.api.controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.deliveryfood.api.controller.interfaces.CozinhaOperations;
@@ -15,8 +18,8 @@ public class CozinhaController implements CozinhaOperations {
 	@Autowired
 	private CadastroCozinhaService cadastroCozinha;
 
-	public List<Cozinha> listar() {
-		return cadastroCozinha.findAll();
+	public Page<Cozinha> listar(@PageableDefault(size = 5) Pageable pageable) {
+		return cadastroCozinha.findAll(pageable);
 	}
 
 	public Cozinha getPorCodigo(Long id) {

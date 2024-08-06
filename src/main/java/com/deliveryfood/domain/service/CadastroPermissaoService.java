@@ -5,7 +5,7 @@ import org.springframework.stereotype.Service;
 
 import com.deliveryfood.domain.exception.EntidadeNaoEncontradaException;
 import com.deliveryfood.domain.model.Permissao;
-import com.deliveryfood.infrastructure.repository.PermissaoRepository;
+import com.deliveryfood.domain.repository.PermissaoRepository;
 
 @Service
 public class CadastroPermissaoService {

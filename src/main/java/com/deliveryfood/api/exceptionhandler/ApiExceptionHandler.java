@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
+import org.springframework.web.multipart.MultipartException;
 import org.springframework.web.servlet.NoHandlerFoundException;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 import org.springframework.web.servlet.resource.NoResourceFoundException;
@@ -368,6 +369,23 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
 				.title("Entidade com problema")
 
 				.detail(exception.getMessage()).build();
+
+		return handleExceptionInternal(exception, problem, new HttpHeaders(), status, request);
+	}
+
+	@ExceptionHandler({ MultipartException.class })
+	public ResponseEntity<?> tratarMultipartException(MultipartException exception, WebRequest request) {
+
+		HttpStatus status = HttpStatus.NOT_FOUND;
+		Problem problem = Problem.builder()
+
+				.status(status.value())
+
+				.type("https://deliveryfood/senha-errada")
+
+				.title("Arquivo não enviado")
+
+				.detail("arquivo não enviado").build();
 
 		return handleExceptionInternal(exception, problem, new HttpHeaders(), status, request);
 	}

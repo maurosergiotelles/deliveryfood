@@ -2,6 +2,8 @@ package com.deliveryfood.api.controller.interfaces;
 
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -21,7 +23,7 @@ import jakarta.validation.Valid;
 public interface CozinhaOperations {
 
 	@GetMapping
-	List<Cozinha> listar();
+	Page<Cozinha> listar(Pageable pageable);
 
 	@GetMapping("/{id}")
 	Cozinha getPorCodigo(@PathVariable Long id);

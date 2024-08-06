@@ -6,6 +6,8 @@ import java.util.Optional;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -50,8 +52,8 @@ public class CadastroCozinhaService {
 		}
 	}
 
-	public List<Cozinha> findAll() {
-		return cozinhaRepository.findAll();
+	public Page<Cozinha> findAll(Pageable pageable) {
+		return cozinhaRepository.findAll(pageable);
 	}
 
 	public Cozinha findById(Long id) {

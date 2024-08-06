@@ -12,7 +12,6 @@ import jakarta.validation.Payload;
 @Target({ ElementType.TYPE })
 @Retention(RUNTIME)
 @Constraint(validatedBy = { ValorZeroIncluiDescricaoValidator.class })
-
 public @interface ValorZeroIncluiDescricao {
 
 	String message() default "descrição obrigatória invália";

@@ -1,5 +1,8 @@
 package com.deliveryfood.domain.service;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -10,7 +13,7 @@ import com.deliveryfood.api.model.input.ProdutoInput;
 import com.deliveryfood.domain.exception.EntidadeNaoEncontradaException;
 import com.deliveryfood.domain.model.Produto;
 import com.deliveryfood.domain.model.Restaurante;
-import com.deliveryfood.infrastructure.repository.ProdutoRepository;
+import com.deliveryfood.domain.repository.ProdutoRepository;
 
 @Service
 public class CadastroProdutoService {
@@ -47,6 +50,10 @@ public class CadastroProdutoService {
 		modelMapper.map(produtoInput, produto);
 
 		return modelMapper.map(produto, ProdutoModel.class);
+	}
+
+	public List<ProdutoModel> findAtivosByRestaurante(Long restauranteId) {
+		return produtoRepository.findAtivosByRestaurante(restauranteId).stream().map(restaurante -> modelMapper.map(restaurante, ProdutoModel.class)).collect(Collectors.toList());
 	}
 
 }
