@@ -29,7 +29,9 @@ import org.springframework.web.servlet.resource.NoResourceFoundException;
 import com.deliveryfood.domain.exception.EntidadeChaveEstrangeiraNaoEncontradaException;
 import com.deliveryfood.domain.exception.EntidadeEmUsoException;
 import com.deliveryfood.domain.exception.EntidadeNaoEncontradaException;
+import com.deliveryfood.domain.exception.FotoProdutoNaoEncontradoExceptio;
 import com.deliveryfood.domain.exception.NegocioException;
+import com.deliveryfood.domain.exception.StorageException;
 import com.deliveryfood.domain.exception.UsuarioAlterarSenhaException;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.exc.IgnoredPropertyException;
@@ -386,6 +388,40 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
 				.title("Arquivo não enviado")
 
 				.detail("arquivo não enviado").build();
+
+		return handleExceptionInternal(exception, problem, new HttpHeaders(), status, request);
+	}
+
+	@ExceptionHandler({ StorageException.class })
+	public ResponseEntity<?> tratarStorageException(StorageException exception, WebRequest request) {
+
+		HttpStatus status = HttpStatus.NOT_FOUND;
+		Problem problem = Problem.builder()
+
+				.status(status.value())
+
+				.type("https://deliveryfood/senha-errada")
+
+				.title("Arquivo não encontrado")
+
+				.detail("arquivo não encontrado").build();
+
+		return handleExceptionInternal(exception, problem, new HttpHeaders(), status, request);
+	}
+
+	@ExceptionHandler({ FotoProdutoNaoEncontradoExceptio.class })
+	public ResponseEntity<?> tratarFotoProdutoNaoEncontradoExceptio(FotoProdutoNaoEncontradoExceptio exception, WebRequest request) {
+
+		HttpStatus status = HttpStatus.NOT_FOUND;
+		Problem problem = Problem.builder()
+
+				.status(status.value())
+
+				.type("https://deliveryfood/senha-errada")
+
+				.title("Não existe cadastro")
+
+				.detail("Não existe cadastro").build();
 
 		return handleExceptionInternal(exception, problem, new HttpHeaders(), status, request);
 	}
