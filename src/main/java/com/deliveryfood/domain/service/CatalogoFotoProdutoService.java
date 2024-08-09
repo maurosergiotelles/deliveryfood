@@ -10,7 +10,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.deliveryfood.api.model.FotoProdutoModel;
 import com.deliveryfood.api.model.input.FotoProdutoInput;
-import com.deliveryfood.domain.exception.EntidadeNaoEncontradaException;
 import com.deliveryfood.domain.exception.FotoProdutoNaoEncontradoExceptio;
 import com.deliveryfood.domain.model.FotoProduto;
 import com.deliveryfood.domain.model.Produto;
@@ -35,15 +34,12 @@ public class CatalogoFotoProdutoService {
 	@Transactional
 	public FotoProdutoModel salvar(Long restauranteId, Long produtoId, FotoProdutoInput fotoProdutoInput) throws IOException {
 
-		FotoProduto fotoProdutoDeletar = produtoRepository.findFotoById(restauranteId, produtoId)
-				.orElseThrow(() -> new EntidadeNaoEncontradaException(String.format("Foto produto não encontrada com id restaurante %s e  id produto %s", restauranteId, produtoId)));
-
 		MultipartFile multipartFile = fotoProdutoInput.getArquivo();
 		String nomeArquivo = fotoStorage.gerarNomeArquivo(multipartFile.getOriginalFilename());
 
-		produtoRepository.delete(fotoProdutoDeletar);
-		Produto produto = cadastroProduto.buscarOuFalhar(restauranteId, produtoId);
+		this.excluirFotoProduto(restauranteId, produtoId);
 
+		Produto produto = cadastroProduto.buscarOuFalhar(restauranteId, produtoId);
 		FotoProduto fotoProduto = new FotoProduto();
 		fotoProduto.setProduto(produto);
 		fotoProduto.setDescricao(fotoProdutoInput.getDescricao());
@@ -55,7 +51,7 @@ public class CatalogoFotoProdutoService {
 		produtoRepository.flush();
 
 		NovaFoto novaFoto = NovaFoto.builder().nomeArquivo(nomeArquivo).inputStream(multipartFile.getInputStream()).build();
-		fotoStorage.remover(fotoProdutoDeletar.getNomeArquivo());
+
 		fotoStorage.armazenar(novaFoto);
 
 		return modelMapper.map(fotoProdutoSaved, FotoProdutoModel.class);
@@ -63,6 +59,16 @@ public class CatalogoFotoProdutoService {
 
 	public FotoProduto buscarOuFalhar(Long restauranteId, Long produtoId) {
 		return produtoRepository.findFotoById(restauranteId, produtoId).orElseThrow(() -> new FotoProdutoNaoEncontradoExceptio("Foto não encontrada."));
+	}
+
+	public void excluirFotoProduto(Long restauranteId, Long produtoId) {
+		FotoProduto foto = buscarOuFalhar(restauranteId, produtoId);
+
+		produtoRepository.delete(foto);
+		produtoRepository.flush();
+
+		fotoStorage.remover(foto.getNomeArquivo());
 
 	}
+
 }
