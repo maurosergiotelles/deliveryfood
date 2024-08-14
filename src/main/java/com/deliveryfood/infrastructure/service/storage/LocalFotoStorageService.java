@@ -5,21 +5,21 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.FileCopyUtils;
 
+import com.deliveryfood.core.storage.StorageProperties;
 import com.deliveryfood.domain.exception.StorageException;
 import com.deliveryfood.domain.service.FotoStorageService;
 
-@Service
-public class LocalFotoStorageService implements FotoStorageService {
+//@Service
+public class LocalFotoStorageService { // implements FotoStorageService {
 
-	@Value("${deliveryfood.storage.local.diretorio-fotos}")
-	private Path diretorioFotos;
+	@Autowired
+	private StorageProperties storageProperties;
 
-	@Override
-	public void armazenar(NovaFoto novaFoto) {
+//	@Override
+	public void armazenar(FotoStorageService.NovaFoto novaFoto) {
 		try {
 			novaFoto.getInputStream();
 			Path path = getArquivoPath(novaFoto.getNomeArquivo());
@@ -32,10 +32,10 @@ public class LocalFotoStorageService implements FotoStorageService {
 	}
 
 	private Path getArquivoPath(String nomeArquivo) {
-		return diretorioFotos.resolve(Path.of(nomeArquivo));
+		return storageProperties.getLocal().getDiretorioFotos().resolve(Path.of(nomeArquivo));
 	}
 
-	@Override
+//	@Override
 	public void remover(String nomeArquivo) {
 		try {
 			Path path = getArquivoPath(nomeArquivo);
@@ -45,7 +45,7 @@ public class LocalFotoStorageService implements FotoStorageService {
 		}
 	}
 
-	@Override
+//	@Override
 	public InputStream recuperar(String nomeArquivo) {
 		try {
 			Path path = getArquivoPath(nomeArquivo);

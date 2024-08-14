@@ -1,6 +1,7 @@
 package com.deliveryfood.domain.service;
 
 import java.io.IOException;
+import java.util.Optional;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,25 +51,31 @@ public class CatalogoFotoProdutoService {
 		FotoProduto fotoProdutoSaved = produtoRepository.save(fotoProduto);
 		produtoRepository.flush();
 
-		NovaFoto novaFoto = NovaFoto.builder().nomeArquivo(nomeArquivo).inputStream(multipartFile.getInputStream()).build();
+		NovaFoto novaFoto = NovaFoto.builder().nomeArquivo(nomeArquivo).inputStream(multipartFile.getInputStream()).length(multipartFile.getSize()).contentType(multipartFile.getContentType()).build();
 
 		fotoStorage.armazenar(novaFoto);
 
 		return modelMapper.map(fotoProdutoSaved, FotoProdutoModel.class);
 	}
 
-	public FotoProduto buscarOuFalhar(Long restauranteId, Long produtoId) {
-		return produtoRepository.findFotoById(restauranteId, produtoId).orElseThrow(() -> new FotoProdutoNaoEncontradoExceptio("Foto não encontrada."));
+	public void excluirFotoProduto(Long restauranteId, Long produtoId) {
+		Optional<FotoProduto> fotoProdutoOptional = produtoRepository.findFotoById(restauranteId, produtoId);
+		if (fotoProdutoOptional.isPresent()) {
+//			FotoProduto foto = produtoRepository.findFotoById(restauranteId, produtoId).orElseThrow(() -> new FotoProdutoNaoEncontradoExceptio("Foto não encontrada."));
+
+			FotoProduto foto = fotoProdutoOptional.get();
+			produtoRepository.delete(foto);
+			produtoRepository.flush();
+
+			fotoStorage.remover(foto.getNomeArquivo());
+//		} else {
+//			throw new FotoProdutoNaoEncontradoExceptio("Foto não encontrada.");
+		}
+
 	}
 
-	public void excluirFotoProduto(Long restauranteId, Long produtoId) {
-		FotoProduto foto = buscarOuFalhar(restauranteId, produtoId);
-
-		produtoRepository.delete(foto);
-		produtoRepository.flush();
-
-		fotoStorage.remover(foto.getNomeArquivo());
-
+	public FotoProduto buscarOuFalhar(Long restauranteId, Long produtoId) {
+		return produtoRepository.findFotoById(restauranteId, produtoId).orElseThrow(() -> new FotoProdutoNaoEncontradoExceptio("Foto não encontrada."));
 	}
 
 }
