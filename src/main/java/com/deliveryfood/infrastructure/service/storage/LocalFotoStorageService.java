@@ -1,7 +1,6 @@
 package com.deliveryfood.infrastructure.service.storage;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
@@ -10,10 +9,9 @@ import org.springframework.util.FileCopyUtils;
 
 import com.deliveryfood.core.storage.StorageProperties;
 import com.deliveryfood.domain.exception.StorageException;
-import com.deliveryfood.domain.service.FotoStorageService;
 
 //@Service
-public class LocalFotoStorageService { // implements FotoStorageService {
+public class LocalFotoStorageService implements FotoStorageService {
 
 	@Autowired
 	private StorageProperties storageProperties;
@@ -31,7 +29,7 @@ public class LocalFotoStorageService { // implements FotoStorageService {
 
 	}
 
-	private Path getArquivoPath(String nomeArquivo) {
+	public Path getArquivoPath(String nomeArquivo) {
 		return storageProperties.getLocal().getDiretorioFotos().resolve(Path.of(nomeArquivo));
 	}
 
@@ -46,10 +44,10 @@ public class LocalFotoStorageService { // implements FotoStorageService {
 	}
 
 //	@Override
-	public InputStream recuperar(String nomeArquivo) {
+	public FotoRecuperada recuperar(String nomeArquivo) {
 		try {
 			Path path = getArquivoPath(nomeArquivo);
-			return Files.newInputStream(path);
+			return FotoRecuperada.builder().inputStream(Files.newInputStream(path)).build();
 		} catch (IOException e) {
 			throw new StorageException("Não foi possível recuperar o arquivo.", e);
 		}

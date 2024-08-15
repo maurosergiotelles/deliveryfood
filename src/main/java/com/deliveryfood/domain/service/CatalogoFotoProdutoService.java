@@ -15,7 +15,8 @@ import com.deliveryfood.domain.exception.FotoProdutoNaoEncontradoExceptio;
 import com.deliveryfood.domain.model.FotoProduto;
 import com.deliveryfood.domain.model.Produto;
 import com.deliveryfood.domain.repository.ProdutoRepository;
-import com.deliveryfood.domain.service.FotoStorageService.NovaFoto;
+import com.deliveryfood.infrastructure.service.storage.FotoStorageService;
+import com.deliveryfood.infrastructure.service.storage.FotoStorageService.NovaFoto;
 
 @Service
 public class CatalogoFotoProdutoService {

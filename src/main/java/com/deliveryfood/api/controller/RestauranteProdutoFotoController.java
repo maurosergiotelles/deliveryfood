@@ -1,9 +1,9 @@
 package com.deliveryfood.api.controller;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.List;
 
+import org.apache.http.HttpHeaders;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
@@ -24,7 +24,8 @@ import com.deliveryfood.api.model.FotoProdutoModel;
 import com.deliveryfood.api.model.input.FotoProdutoInput;
 import com.deliveryfood.domain.model.FotoProduto;
 import com.deliveryfood.domain.service.CatalogoFotoProdutoService;
-import com.deliveryfood.domain.service.FotoStorageService;
+import com.deliveryfood.infrastructure.service.storage.FotoStorageService;
+import com.deliveryfood.infrastructure.service.storage.FotoStorageService.FotoRecuperada;
 
 import jakarta.validation.Valid;
 
@@ -54,7 +55,7 @@ public class RestauranteProdutoFotoController {
 	}
 
 	@GetMapping
-	public ResponseEntity<InputStreamResource> servirFoto(@PathVariable Long restauranteId, @PathVariable Long produtoId, @RequestHeader(name = "accept") String acceptHeader) {
+	public ResponseEntity<?> servirFoto(@PathVariable Long restauranteId, @PathVariable Long produtoId, @RequestHeader(name = "accept") String acceptHeader) {
 		try {
 			FotoProduto fotoProduto = catalogoFotoProduto.buscarOuFalhar(restauranteId, produtoId);
 
@@ -62,9 +63,13 @@ public class RestauranteProdutoFotoController {
 			List<MediaType> mediatypesAceitas = MediaType.parseMediaTypes(acceptHeader);
 			verificarCompatiblidadeMediaType(mediaTypeFoto, mediatypesAceitas);
 
-			InputStream inputStream = fotoStorage.recuperar(fotoProduto.getNomeArquivo());
+			FotoRecuperada fotoRecuperada = fotoStorage.recuperar(fotoProduto.getNomeArquivo());
 
-			return ResponseEntity.ok().contentType(mediaTypeFoto).body(new InputStreamResource(inputStream));
+			if (fotoRecuperada.temUrl()) {
+				return ResponseEntity.status(HttpStatus.FOUND).header(HttpHeaders.LOCATION, fotoRecuperada.getUrl()).build();
+			}
+
+			return ResponseEntity.ok().contentType(mediaTypeFoto).body(new InputStreamResource(fotoRecuperada.getInputStream()));
 		} catch (Exception e) {
 			return ResponseEntity.notFound().build();
 		}
