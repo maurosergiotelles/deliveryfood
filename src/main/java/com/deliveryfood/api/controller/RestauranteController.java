@@ -33,7 +33,6 @@ public class RestauranteController {
 	CadastroRestauranteService cadastroRestaurante;
 
 	@GetMapping
-
 	@ResponseStatus(HttpStatus.OK)
 	public MappingJacksonValue getAll(@RequestParam(required = false) String projecao) {
 

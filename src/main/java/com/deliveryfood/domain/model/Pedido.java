@@ -7,7 +7,9 @@ import java.util.List;
 import java.util.UUID;
 
 import org.hibernate.annotations.CreationTimestamp;
+import org.springframework.data.domain.AbstractAggregateRoot;
 
+import com.deliveryfood.domain.event.PedidoConfirmadoEvent;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.persistence.CascadeType;
@@ -30,10 +32,10 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 @Data
-@EqualsAndHashCode(of = { "id" })
+@EqualsAndHashCode(of = { "id" }, callSuper = false)
 @Entity
 @Table(name = "pedido")
-public class Pedido {
+public class Pedido extends AbstractAggregateRoot<Pedido> {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -107,5 +109,21 @@ public class Pedido {
 	@PrePersist
 	public void atribuirPedidoAosItens() {
 		this.getItens().forEach(item -> item.setPedido(this));
+	}
+
+	public void confirmar() {
+		setStatusPedido(StatusPedido.CONFIRMADO);
+		setDataConfirmacao(LocalDateTime.now());
+		registerEvent(new PedidoConfirmadoEvent(this));
+	}
+
+	public void entregar() {
+		setStatusPedido(StatusPedido.ENTREGUE);
+		setDataEntrega(LocalDateTime.now());
+	}
+
+	public void cancelar() {
+		setStatusPedido(StatusPedido.CANCELADO);
+		setDataCancelamento(LocalDateTime.now());
 	}
 }

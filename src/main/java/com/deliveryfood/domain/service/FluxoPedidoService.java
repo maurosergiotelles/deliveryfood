@@ -1,7 +1,5 @@
 package com.deliveryfood.domain.service;
 
-import java.time.LocalDateTime;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -9,7 +7,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.deliveryfood.domain.exception.NegocioException;
 import com.deliveryfood.domain.model.Pedido;
 import com.deliveryfood.domain.model.StatusPedido;
-import com.deliveryfood.domain.service.EnvioEmailService.Mensagem;
+import com.deliveryfood.domain.repository.PedidoRepository;
 
 @Service
 public class FluxoPedidoService {
@@ -18,30 +16,18 @@ public class FluxoPedidoService {
 	private EmissaoPedidoService emissaoPedido;
 
 	@Autowired
-	private EnvioEmailService envioEmailService;
+	private PedidoRepository pedidoRepository;
 
 	@Transactional
 	public void confirmar(String codigoPedido) {
 		Pedido pedido = emissaoPedido.buscarOuFalhar(codigoPedido);
-		Mensagem mensagem = Mensagem.builder()
-
-				.assunto(pedido.getRestaurante().getNome() + " - Pedido confirmado")
-
-				.corpo("pedido-confirmado.html")
-
-				.variavel("pedido", pedido)
-
-				.destinatario(pedido.getCliente().getEmail()).build();
-
-		envioEmailService.enviar(mensagem);
 
 		if (!pedido.getStatusPedido().equals(StatusPedido.CRIADO)) {
 			throw new NegocioException(String.format("Status do pedido %s não pode ser alterado de %s para %s", pedido.getCodigo(), pedido.getStatusPedido(), StatusPedido.CONFIRMADO));
 		}
 
-		pedido.setStatusPedido(StatusPedido.CONFIRMADO);
-		pedido.setDataConfirmacao(LocalDateTime.now());
-
+		pedido.confirmar();
+		pedidoRepository.save(pedido);
 	}
 
 	@Transactional
@@ -52,8 +38,7 @@ public class FluxoPedidoService {
 			throw new NegocioException(String.format("Status do pedido %s não pode ser alterado de %s para %s", pedido.getCodigo(), pedido.getStatusPedido(), StatusPedido.CANCELADO));
 		}
 
-		pedido.setStatusPedido(StatusPedido.CANCELADO);
-		pedido.setDataCancelamento(LocalDateTime.now());
+		pedido.cancelar();
 	}
 
 	@Transactional
@@ -64,7 +49,6 @@ public class FluxoPedidoService {
 			throw new NegocioException(String.format("Status do pedido %s não pode ser alterado de %s para %s", pedido.getCodigo(), pedido.getStatusPedido(), StatusPedido.ENTREGUE));
 		}
 
-		pedido.setStatusPedido(StatusPedido.ENTREGUE);
-		pedido.setDataEntrega(LocalDateTime.now());
+		pedido.entregar();
 	}
 }
