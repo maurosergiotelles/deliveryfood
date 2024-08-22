@@ -27,7 +27,7 @@ public class StorageConfiguration {
 	}
 
 	@Bean
-	public FotoStorageService fotoStorageService() {
+	FotoStorageService fotoStorageService() {
 
 		if (TipoStorage.S3.equals(storageProperties.getTipo())) {
 			return new S3FotoStorageService();

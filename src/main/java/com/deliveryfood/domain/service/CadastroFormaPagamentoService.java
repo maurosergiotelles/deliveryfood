@@ -1,5 +1,6 @@
 package com.deliveryfood.domain.service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -71,6 +72,10 @@ public class CadastroFormaPagamentoService {
 		} catch (DataIntegrityViolationException e) {
 			throw new EntidadeEmUsoException(String.format("Forma Pagamento com o código %s está em uso", id));
 		}
+	}
+
+	public LocalDateTime getDataUltimaAtualizacao() {
+		return formaPagamentoRepository.getDataUltimaAtualizacao();
 	}
 
 }
