@@ -6,6 +6,8 @@ import java.util.List;
 import com.deliveryfood.core.validation.Groups;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.media.Schema.RequiredMode;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -28,11 +30,13 @@ public class Cozinha {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@NotNull(groups = Groups.CozinhaId.class)
 //	@JsonIgnore
+	@Schema(requiredMode = RequiredMode.REQUIRED)
 	private Long id;
 
 //	@JsonProperty("titulo")
 	@NotBlank
 	@Column(nullable = false, length = 60)
+	@Schema(requiredMode = RequiredMode.NOT_REQUIRED)
 	private String nome;
 
 	@OneToMany(mappedBy = "cozinha")

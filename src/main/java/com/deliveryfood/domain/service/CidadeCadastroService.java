@@ -5,9 +5,12 @@ import java.util.Optional;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.hateoas.CollectionModel;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.deliveryfood.api.model.CidadeModel;
+import com.deliveryfood.client.controller.assembler.CidadeModelAssembler;
 import com.deliveryfood.domain.exception.EntidadeChaveEstrangeiraNaoEncontradaException;
 import com.deliveryfood.domain.exception.EntidadeNaoEncontradaException;
 import com.deliveryfood.domain.model.Cidade;
@@ -27,19 +30,24 @@ public class CidadeCadastroService {
 	@Autowired
 	private EstadoRepository estadoRepository;
 
-	public List<Cidade> findAll() {
-		return cidadeRepository.findAllCidades();
+	@Autowired
+	private CidadeModelAssembler assembler;
+
+	public CollectionModel<CidadeModel> findAll() {
+		List<Cidade> cidades = cidadeRepository.findAllCidades();
+		return assembler.toCollectionModel(cidades);
 	}
 
-	public Cidade findById(Long id) {
-		return this.buscarOuFalhar(id);
+	public CidadeModel findById(Long id) {
+		return assembler.toModel(this.buscarOuFalhar(id));
 	}
 
 	@Transactional
-	public Cidade adicionar(Cidade cidade) {
+	public CidadeModel adicionar(Cidade cidade) {
 		estadoExisteOuFalha(cidade.getEstado().getId());
 
-		return cidadeRepository.save(cidade);
+		Cidade cidadeSalva = cidadeRepository.save(cidade);
+		return assembler.toModel(cidadeSalva);
 	}
 
 	@Transactional
